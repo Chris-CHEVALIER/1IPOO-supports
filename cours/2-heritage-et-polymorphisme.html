@@ -1,0 +1,1072 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Héritage et polymorphisme – 1IPOO</title>
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reset.css">
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reveal.css">
+  <link rel="stylesheet" href="../assets/css/hexagone.css">
+  <style>
+    .reveal .schema { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: .78em; }
+    .reveal .schema .ligne { display: flex; gap: 22px; justify-content: center; }
+    .reveal .schema .boite { border: 3px solid var(--marine); border-radius: 8px; min-width: 190px; background: #fff; }
+    .reveal .schema .boite .nom { background: var(--marine); color: #fff; font-weight: 700; text-align: center; padding: 4px 10px; }
+    .reveal .schema .boite .membres { padding: 6px 12px; font-family: var(--police-code); font-size: .82em; line-height: 1.4; }
+    .reveal .schema .boite.ambre { border-color: var(--ambre); }
+    .reveal .schema .boite.ambre .nom { background: var(--ambre); color: var(--marine); }
+    .reveal .schema .fleche { color: var(--ambre); font-weight: 700; font-size: .9em; }
+  </style>
+</head>
+<body data-pied="1IPOO – Initiation à la programmation orientée objet · Héritage et polymorphisme">
+<div class="reveal">
+<div class="slides">
+
+  <!-- ================================================================== -->
+  <section data-layout="titre">
+    <h1>Héritage et polymorphisme</h1>
+    <div class="sous-titre">
+      <span class="code-module">1IPOO</span> – Initiation à la programmation orientée objet<br>
+      Chris CHEVALIER
+    </div>
+    <aside class="notes">
+      Rappel express de la veille : classe, encapsulation, constructeur, .hpp/.cpp, références. Qui a fini le TP1 ?
+    </aside>
+  </section>
+
+  <section data-layout="sommaire">
+    <h1>Sommaire</h1>
+    <ol>
+      <li>L'héritage</li>
+      <li><code>protected</code> et redéfinition</li>
+      <li>L'héritage multiple</li>
+      <li>Le polymorphisme</li>
+      <li>Les collections d'objets</li>
+      <li>Les classes abstraites</li>
+    </ol>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- #1 L'HÉRITAGE                                                      -->
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">#1</div>
+    <h2>L'héritage</h2>
+    <div class="sous-titre">Héritage et polymorphisme</div>
+  </section>
+
+  <section>
+    <h2>Le problème : du code en double</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <pre data-titre="Student"><code class="language-plaintext">class Student {
+private:
+    string name;
+    string email;
+    string group;
+public:
+    void introduce() const;
+    void study() const;
+};</code></pre>
+        <pre data-titre="Teacher"><code class="language-plaintext">class Teacher {
+private:
+    string name;
+    string email;
+    string subject;
+public:
+    void introduce() const;
+    void teach() const;
+};</code></pre>
+      </div>
+      <ul class="dense">
+        <li><code>name</code>, <code>email</code> et <code>introduce()</code> sont écrits <strong>deux fois</strong> : chaque correction devra être faite deux fois</li>
+        <li>Un étudiant <strong>est une</strong> personne, un professeur <strong>est une</strong> personne : ce qu'ils ont en commun peut aller dans une classe <code>Person</code></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Hériter d'une classe</h2>
+    <div class="corps">
+      <div class="colonnes texte-code">
+        <ul class="dense">
+          <li>Une <strong>classe fille</strong> (ou dérivée) <strong>hérite</strong> de tous les attributs et de toutes les méthodes de sa <strong>classe mère</strong> (ou de base)</li>
+          <li>Elle y <strong>ajoute</strong> ce qui lui est propre</li>
+          <li>Syntaxe : <code>class Student : public Person { … };</code></li>
+          <li>La règle pour savoir si l'héritage a du sens : on doit pouvoir dire « une <code>Student</code> <strong>est une</strong> <code>Person</code> ». Un étudiant n'est pas un ordinateur : là, c'est de la composition</li>
+        </ul>
+        <div class="schema">
+          <div class="ligne">
+            <div class="boite">
+              <div class="nom">Person</div>
+              <div class="membres">name<br>email<br>introduce()</div>
+            </div>
+          </div>
+          <div class="fleche">▲ hérite de ▲</div>
+          <div class="ligne">
+            <div class="boite ambre">
+              <div class="nom">Student</div>
+              <div class="membres">group<br>study()</div>
+            </div>
+            <div class="boite ambre">
+              <div class="nom">Teacher</div>
+              <div class="membres">subject<br>teach()</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      Ce schéma est un diagramme de classes simplifié (UML) : la flèche va de la fille vers la mère.
+    </aside>
+  </section>
+
+  <section class="haut">
+    <h2>L'héritage en pratique</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <div>
+          <pre data-titre="inherit.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+class Person {
+private:
+    string name;
+
+public:
+    Person(string newName) : name(newName) {
+    }
+    void introduce() const {
+        cout &lt;&lt; "Je suis " &lt;&lt; name &lt;&lt; endl;
+    }
+};
+          </code></pre>
+          <ul class="legende-code">
+            <li><code>: public Person</code> : <code>Student</code> hérite de <code>Person</code></li>
+            <li>Le constructeur de <code>Student</code> appelle celui de <code>Person</code> dans sa liste d'initialisation : <code>Person(newName)</code></li>
+          </ul>
+        </div>
+        <div>
+          <pre data-titre="inherit.cpp (2/2)"><code class="language-cpp" data-trim>
+class Student : public Person {
+private:
+    string group;
+
+public:
+    Student(string newName, string newGroup)
+        : Person(newName), group(newGroup) {
+    }
+};
+
+int main() {
+    Student manon("Manon", "B1");
+    manon.introduce();
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="inherit.cpp"><code class="nohighlight" data-noescape>Je suis Manon</code></pre>
+          <ul class="legende-code">
+            <li><code>manon.introduce()</code> fonctionne alors que <code>Student</code> ne déclare aucune méthode <code>introduce</code> : elle est <strong>héritée</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Construction et destruction</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <div>
+          <pre data-titre="order.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+using namespace std;
+
+class Person {
+public:
+    Person() {
+        cout &lt;&lt; "+ Person" &lt;&lt; endl;
+    }
+    ~Person() {
+        cout &lt;&lt; "- Person" &lt;&lt; endl;
+    }
+};
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="order.cpp"><code class="nohighlight" data-noescape>+ Person
++ Student
+Au travail !
+- Student
+- Person</code></pre>
+        </div>
+        <div>
+          <pre data-titre="order.cpp (2/2)"><code class="language-cpp" data-trim>
+class Student : public Person {
+public:
+    Student() {
+        cout &lt;&lt; "+ Student" &lt;&lt; endl;
+    }
+    ~Student() {
+        cout &lt;&lt; "- Student" &lt;&lt; endl;
+    }
+};
+
+int main() {
+    Student cosmo;
+    cout &lt;&lt; "Au travail !" &lt;&lt; endl;
+    return 0;
+}
+          </code></pre>
+          <ul class="legende-code">
+            <li>Un objet <code>Student</code> contient une partie <code>Person</code> : elle est <strong>construite en premier</strong></li>
+            <li>La destruction se fait dans l'<strong>ordre inverse</strong> : la fille d'abord, la mère ensuite</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- #2 PROTECTED ET REDÉFINITION                                       -->
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">#2</div>
+    <h2><code>protected</code> et redéfinition</h2>
+    <div class="sous-titre">Héritage et polymorphisme</div>
+  </section>
+
+  <section>
+    <h2>Le droit d'accès <code>protected</code></h2>
+    <div class="corps">
+      <p class="dense">Une méthode de <code>Student</code> ne peut pas lire <code>name</code> s'il est <code>private</code> dans <code>Person</code> : <code>private</code> réserve l'accès à la classe elle-même, pas à ses filles.</p>
+      <table class="dense">
+        <tr><th>Droit d'accès</th><th>La classe</th><th>Ses classes filles</th><th>Le reste du programme</th></tr>
+        <tr><td><code>public</code></td><td>oui</td><td>oui</td><td>oui</td></tr>
+        <tr><td><code>protected</code></td><td>oui</td><td>oui</td><td><strong>non</strong></td></tr>
+        <tr><td><code>private</code></td><td>oui</td><td><strong>non</strong></td><td><strong>non</strong></td></tr>
+      </table>
+      <div class="encadre marine" style="margin-top: 16px;">
+        Dans une classe mère, on déclare <strong>en <code>protected</code></strong> les attributs dont les filles ont besoin.
+        L'encapsulation est respectée : <code>main</code> n'y a toujours pas accès.
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Redéfinir une méthode héritée</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <div>
+          <pre data-titre="redefine.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+class Person {
+protected:
+    string name;
+public:
+    Person(string newName) : name(newName) {}
+    void introduce() const {
+        cout &lt;&lt; "Je suis " &lt;&lt; name &lt;&lt; endl;
+    }
+};
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="redefine.cpp"><code class="nohighlight" data-noescape>Je suis Manon
+Manon est en B1</code></pre>
+          <ul class="legende-code">
+            <li>Même nom dans la fille : la méthode de la mère est <strong>masquée</strong></li>
+            <li><code>Person::introduce()</code> appelle la version de la mère</li>
+          </ul>
+        </div>
+        <div>
+          <pre data-titre="redefine.cpp (2/2)"><code class="language-cpp" data-trim>
+class Student : public Person {
+private:
+    string group;
+
+public:
+    Student(string newName, string newGroup)
+        : Person(newName), group(newGroup) {
+    }
+    void introduce() const {
+        Person::introduce();
+        cout &lt;&lt; name &lt;&lt; " est en " &lt;&lt; group
+             &lt;&lt; endl;
+    }
+};
+
+int main() {
+    Student manon("Manon", "B1");
+    manon.introduce();
+    return 0;
+}
+          </code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Qu'affiche ce programme ?</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <pre data-titre="quiz_1.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+using namespace std;
+
+class Room {
+public:
+    void describe() const {
+        cout &lt;&lt; "Une salle" &lt;&lt; endl;
+    }
+};
+
+class Lab : public Room {
+public:
+    void describe() const {
+        cout &lt;&lt; "Une salle de TP" &lt;&lt; endl;
+    }
+};
+        </code></pre>
+        <div>
+          <pre data-titre="quiz_1.cpp (2/2)"><code class="language-cpp" data-trim>
+int main() {
+    Room room;
+    Lab lab;
+    room.describe();
+    lab.describe();
+    lab.Room::describe();
+    return 0;
+}
+          </code></pre>
+          <div class="reponse fragment"><code>Une salle</code> : <code>room</code> est une <code>Room</code></div>
+          <div class="reponse fragment"><code>Une salle de TP</code> : <code>Lab</code> redéfinit <code>describe()</code></div>
+          <div class="reponse fragment"><code>Une salle</code> : <code>Room::</code> demande explicitement la version de la mère</div>
+        </div>
+      </div>
+      <pre class="terminal" data-sortie="quiz_1.cpp" style="display: none;"><code class="nohighlight" data-noescape>Une salle
+Une salle de TP
+Une salle</code></pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>À vous : les cours en ligne</h2>
+    <div class="corps">
+      <p>Dans un fichier <code>courses.cpp</code> :</p>
+      <ul class="dense">
+        <li>une classe <code>Course</code> (un cours) avec deux attributs <code>protected</code>, <code>name</code> et <code>hours</code>, un constructeur et une méthode <code>describe()</code> qui affiche <code>Algorithmique : 12 h</code> ;</li>
+        <li>une classe <code>OnlineCourse</code> qui hérite de <code>Course</code>, avec un attribut <code>platform</code> en plus ;</li>
+        <li>sa méthode <code>describe()</code> appelle celle de <code>Course</code>, puis affiche <code>En ligne sur Teams</code>.</li>
+      </ul>
+      <p class="dense">Dans <code>main</code>, créez un cours « Algorithmique » de 12 h et un cours en ligne « Anglais » de 20 h sur Teams, puis appelez <code>describe()</code> sur chacun.</p>
+      <div class="encadre marine">Pour valider : le constructeur d'<code>OnlineCourse</code> appelle celui de <code>Course</code> et aucun attribut n'est recopié.</div>
+    </div>
+    <aside class="notes">
+      Correction : OnlineCourse(string n, int h, string p) : Course(n, h), platform(p) {} ; describe() { Course::describe(); cout &lt;&lt; "En ligne sur " &lt;&lt; platform; }
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- #3 L'HÉRITAGE MULTIPLE                                             -->
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">#3</div>
+    <h2>L'héritage multiple</h2>
+    <div class="sous-titre">Héritage et polymorphisme</div>
+  </section>
+
+  <section>
+    <h2>Deux classes mères</h2>
+    <div class="corps">
+      <div class="colonnes texte-code">
+        <ul class="dense">
+          <li>En C++, une classe peut hériter de <strong>plusieurs</strong> classes à la fois : c'est l'<strong>héritage multiple</strong></li>
+          <li>Un étudiant en alternance <strong>est un</strong> étudiant <strong>et</strong> un salarié : il hérite de ce que savent faire les deux</li>
+          <li>Les classes mères sont séparées par une virgule</li>
+          <li>Le constructeur appelle <strong>les deux</strong> constructeurs mères</li>
+        </ul>
+        <div>
+          <div class="schema">
+            <div class="ligne">
+              <div class="boite">
+                <div class="nom">Student</div>
+                <div class="membres">school<br>study()</div>
+              </div>
+              <div class="boite">
+                <div class="nom">Employee</div>
+                <div class="membres">company<br>work()</div>
+              </div>
+            </div>
+            <div class="fleche">▲ hérite des deux ▲</div>
+            <div class="ligne">
+              <div class="boite ambre">
+                <div class="nom">Apprentice</div>
+                <div class="membres">week()</div>
+              </div>
+            </div>
+          </div>
+          <pre data-titre="Syntaxe" style="margin-top: 14px;"><code class="language-plaintext">class Apprentice : public Student,
+                   public Employee { … };</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Les deux classes mères</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <pre data-titre="apprentice.cpp (1/3)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+class Student {
+protected:
+    string school;
+
+public:
+    Student(string newSchool)
+        : school(newSchool) {
+    }
+    void study() const {
+        cout &lt;&lt; "Cours à " &lt;&lt; school &lt;&lt; endl;
+    }
+};
+        </code></pre>
+        <div>
+          <pre data-titre="apprentice.cpp (2/3)"><code class="language-cpp" data-trim>
+class Employee {
+protected:
+    string company;
+
+public:
+    Employee(string newCompany)
+        : company(newCompany) {
+    }
+    void work() const {
+        cout &lt;&lt; "Travail chez " &lt;&lt; company
+             &lt;&lt; endl;
+    }
+};
+          </code></pre>
+          <ul class="legende-code">
+            <li>Deux classes ordinaires, sans lien entre elles</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>La classe fille</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <pre data-titre="apprentice.cpp (3/3)"><code class="language-cpp" data-trim>
+class Apprentice : public Student,
+                   public Employee {
+public:
+    Apprentice(string school, string company)
+        : Student(school), Employee(company) {
+    }
+    void week() const {
+        study();
+        study();
+        work();
+    }
+};
+
+int main() {
+    Apprentice cosmo("Hexagone", "Atelier Nova");
+    cosmo.week();
+    return 0;
+}
+        </code></pre>
+        <div>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="apprentice.cpp"><code class="nohighlight" data-noescape>Cours à Hexagone
+Cours à Hexagone
+Travail chez Atelier Nova</code></pre>
+          <ul class="dense">
+            <li><code>Apprentice</code> peut appeler <code>study()</code>, héritée de <code>Student</code>, et <code>work()</code>, héritée d'<code>Employee</code></li>
+            <li>Les constructeurs mères sont appelés dans l'ordre où les classes sont <strong>déclarées</strong> après les deux-points</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Les pièges de l'héritage multiple</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div class="carte">
+          <h3>Deux méthodes de même nom</h3>
+          <p>Si <code>Student</code> et <code>Employee</code> ont toutes les deux une méthode <code>display()</code>, l'appel <code>cosmo.display()</code> est <strong>ambigu</strong> : erreur de compilation.</p>
+          <p>Solutions : préciser la classe, <code>cosmo.Student::display();</code>, ou redéfinir <code>display()</code> dans <code>Apprentice</code>.</p>
+        </div>
+        <div class="carte">
+          <h3>Le problème du losange</h3>
+          <p>Si <code>Student</code> et <code>Employee</code> héritent toutes les deux de <code>Person</code>, un <code>Apprentice</code> contient <strong>deux</strong> parties <code>Person</code>, donc deux noms.</p>
+          <p class="petit muet">C++ le résout avec l'<a href="https://cppreference.com/w/cpp/language/derived_class.html" target="_blank">héritage virtuel</a>, hors programme.</p>
+        </div>
+      </div>
+      <div class="encadre marine" style="margin-top: 16px;">
+        Conseil : réservez l'héritage multiple aux cas où la seconde classe mère apporte une <strong>capacité</strong> indépendante (savoir lancer des sorts, savoir s'afficher…), sans ancêtre commun avec la première.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- #4 LE POLYMORPHISME                                                -->
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">#4</div>
+    <h2>Le polymorphisme</h2>
+    <div class="sous-titre">Héritage et polymorphisme</div>
+  </section>
+
+  <section class="haut">
+    <h2>Le problème : un professeur qui s'ignore</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <pre data-titre="static.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+class Person {
+protected:
+    string name;
+public:
+    Person(string newName) : name(newName) {}
+    void introduce() const {
+        cout &lt;&lt; "Je suis " &lt;&lt; name &lt;&lt; endl;
+    }
+};
+
+class Teacher : public Person {
+public:
+    Teacher(string newName) : Person(newName) {}
+    void introduce() const {
+        cout &lt;&lt; "Professeur " &lt;&lt; name &lt;&lt; endl;
+    }
+};
+        </code></pre>
+        <div>
+          <pre data-titre="static.cpp (2/2)"><code class="language-cpp" data-trim>
+void welcome(const Person&amp; person) {
+    person.introduce();
+}
+
+int main() {
+    Person manon("Manon");
+    Teacher chris("Chris");
+    chris.introduce();
+    welcome(manon);
+    welcome(chris);
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="static.cpp"><code class="nohighlight" data-noescape>Professeur Chris
+Je suis Manon
+Je suis Chris</code></pre>
+          <ul class="legende-code">
+            <li>Pour une <code>Person&amp;</code>, le compilateur choisit <code>Person::introduce()</code>, même pour Chris</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      Un professeur est une personne, donc welcome accepte un Teacher. Mais le choix de la méthode se fait sur le type déclaré du paramètre.
+    </aside>
+  </section>
+
+  <section class="haut">
+    <h2>La solution : une méthode virtuelle</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <pre data-titre="virtual.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+class Person {
+protected:
+    string name;
+public:
+    Person(string newName) : name(newName) {}
+    virtual void introduce() const {
+        cout &lt;&lt; "Je suis " &lt;&lt; name &lt;&lt; endl;
+    }
+};
+
+class Teacher : public Person {
+public:
+    Teacher(string newName) : Person(newName) {}
+    void introduce() const override {
+        cout &lt;&lt; "Professeur " &lt;&lt; name &lt;&lt; endl;
+    }
+};
+        </code></pre>
+        <div>
+          <pre data-titre="virtual.cpp (2/2)"><code class="language-cpp" data-trim>
+void welcome(const Person&amp; person) {
+    person.introduce();
+}
+
+int main() {
+    Person manon("Manon");
+    Teacher chris("Chris");
+    welcome(manon);
+    welcome(chris);
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="virtual.cpp"><code class="nohighlight" data-noescape>Je suis Manon
+Professeur Chris</code></pre>
+          <ul class="legende-code">
+            <li><code>virtual</code> : la méthode est choisie selon le <strong>vrai type</strong> de l'objet, à l'exécution</li>
+            <li><code>override</code> : le compilateur vérifie qu'une méthode virtuelle est bien redéfinie</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Le polymorphisme en résumé</h2>
+    <div class="corps">
+      <ul class="dense">
+        <li><strong>Polymorphisme</strong> : « plusieurs formes ». Le même appel, <code>person.introduce()</code>, se comporte différemment selon le type réel de l'objet</li>
+        <li><strong>Résolution statique</strong> : sans <code>virtual</code>, le compilateur choisit la méthode d'après le type <strong>déclaré</strong> de la variable</li>
+        <li><strong>Résolution dynamique</strong> : avec <code>virtual</code>, le programme choisit la méthode d'après le type <strong>réel</strong> de l'objet, pendant l'exécution</li>
+      </ul>
+      <div class="encadre marine" style="margin-top: 12px;">
+        <span class="intitule">Les deux ingrédients du polymorphisme</span>
+        <p>1. Une méthode <strong><code>virtual</code></strong> dans la classe mère.</p>
+        <p>2. Un accès par <strong>référence</strong> (<code>Person&amp;</code>) ou par <strong>pointeur</strong> (<code>Person*</code>). Avec une simple copie, l'objet perd sa partie fille.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Qu'affiche ce programme ?</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <pre data-titre="quiz_2.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+using namespace std;
+
+class Message {
+public:
+    virtual void send() const {
+        cout &lt;&lt; "Message" &lt;&lt; endl;
+    }
+};
+
+class Email : public Message {
+public:
+    void send() const override {
+        cout &lt;&lt; "E-mail" &lt;&lt; endl;
+    }
+};
+        </code></pre>
+        <div>
+          <pre data-titre="quiz_2.cpp (2/2)"><code class="language-cpp" data-trim>
+void sendCopy(Message message) {
+    message.send();
+}
+
+void sendRef(const Message&amp; message) {
+    message.send();
+}
+
+int main() {
+    Email email;
+    email.send();
+    sendCopy(email);
+    sendRef(email);
+    return 0;
+}
+          </code></pre>
+          <div class="reponse fragment"><code>E-mail</code> : appel direct sur un <code>Email</code></div>
+          <div class="reponse fragment"><code>Message</code> : la <strong>copie</strong> ne garde que la partie <code>Message</code> de l'objet</div>
+          <div class="reponse fragment"><code>E-mail</code> : référence et méthode virtuelle, c'est du polymorphisme</div>
+        </div>
+      </div>
+      <pre class="terminal" data-sortie="quiz_2.cpp" style="display: none;"><code class="nohighlight" data-noescape>E-mail
+Message
+E-mail</code></pre>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- #5 LES COLLECTIONS D'OBJETS                                        -->
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">#5</div>
+    <h2>Les collections d'objets</h2>
+    <div class="sous-titre">Héritage et polymorphisme</div>
+  </section>
+
+  <section class="haut">
+    <h2>Le tableau dynamique <code>vector</code></h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre data-titre="vector.cpp"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+int main() {
+    vector&lt;int&gt; grades = {12, 15, 9};
+    grades.push_back(17);
+    cout &lt;&lt; grades.size() &lt;&lt; " notes" &lt;&lt; endl;
+    cout &lt;&lt; "Première : " &lt;&lt; grades[0] &lt;&lt; endl;
+
+    int total = 0;
+    for (int grade : grades) {
+        total = total + grade;
+    }
+    cout &lt;&lt; "Total : " &lt;&lt; total &lt;&lt; endl;
+    return 0;
+}
+        </code></pre>
+        <div>
+          <ul class="dense">
+            <li><code>vector&lt;int&gt;</code> est une liste d'entiers, comme une liste Python. Entre chevrons, le <strong>type des éléments</strong></li>
+            <li><code>push_back()</code> ajoute à la fin, comme <code>append()</code></li>
+            <li><code>size()</code> donne le nombre d'éléments, <code>[0]</code> le premier</li>
+            <li><code>for (int grade : grades)</code> parcourt la liste, comme <code>for grade in grades</code></li>
+          </ul>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="vector.cpp"><code class="nohighlight" data-noescape>4 notes
+Première : 12
+Total : 53</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Les pointeurs</h2>
+    <div class="corps">
+      <div class="colonnes texte-code">
+        <ul class="dense">
+          <li>Un <code>vector&lt;Person&gt;</code> range des <strong>copies</strong> : un professeur y perdrait sa partie <code>Teacher</code></li>
+          <li>On range donc des <strong>pointeurs</strong> : <code>vector&lt;Person*&gt;</code></li>
+          <li>Un <strong>pointeur</strong> contient l'<strong>adresse</strong> d'un objet en mémoire. Il ne copie pas l'objet, il indique où le trouver</li>
+          <li><code>&amp;chris</code> donne l'adresse de <code>chris</code>. <code>-&gt;</code> appelle une méthode à travers un pointeur</li>
+          <li><code>nullptr</code> est un pointeur qui ne pointe sur rien</li>
+        </ul>
+        <pre data-titre="Extrait"><code class="language-plaintext">Teacher chris("Chris");
+Person* pointer = &amp;chris;
+
+pointer-&gt;introduce();
+// Professeur Chris
+// si introduce() est virtuelle</code></pre>
+      </div>
+    </div>
+    <aside class="notes">
+      Une référence est un autre nom pour un objet ; un pointeur est une variable qui contient une adresse et peut changer de cible.
+      On ne peut pas ranger des références dans un vector, d'où les pointeurs.
+    </aside>
+  </section>
+
+  <section class="haut">
+    <h2>Une collection hétérogène</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <pre data-titre="people.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+using namespace std;
+class Person {
+protected:
+    string name;
+public:
+    Person(string newName) : name(newName) {}
+    virtual void introduce() const {
+        cout &lt;&lt; "Je suis " &lt;&lt; name &lt;&lt; endl;
+    }
+};
+
+class Teacher : public Person {
+public:
+    Teacher(string newName) : Person(newName) {}
+    void introduce() const override {
+        cout &lt;&lt; "Professeur " &lt;&lt; name &lt;&lt; endl;
+    }
+};
+        </code></pre>
+        <div>
+          <pre data-titre="people.cpp (2/2)"><code class="language-cpp" data-trim>
+int main() {
+    Person manon("Manon");
+    Teacher chris("Chris");
+    Person cosmo("Cosmo");
+    vector&lt;Person*&gt; people;
+    people.push_back(&amp;manon);
+    people.push_back(&amp;chris);
+    people.push_back(&amp;cosmo);
+
+    for (Person* person : people) {
+        person-&gt;introduce();
+    }
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="people.cpp"><code class="nohighlight" data-noescape>Je suis Manon
+Professeur Chris
+Je suis Cosmo</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2><code>new</code>, <code>delete</code> et destructeur virtuel</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <div>
+          <pre data-titre="dynamic.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+using namespace std;
+
+class Message {
+public:
+    virtual ~Message() {
+        cout &lt;&lt; "- Message" &lt;&lt; endl;
+    }
+};
+
+class Email : public Message {
+public:
+    ~Email() override {
+        cout &lt;&lt; "- Email" &lt;&lt; endl;
+    }
+};
+          </code></pre>
+          
+        </div>
+        <div>
+          <pre data-titre="dynamic.cpp (2/2)"><code class="language-cpp" data-trim>
+int main() {
+    Message* message = new Email();
+    delete message;
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="dynamic.cpp"><code class="nohighlight" data-noescape>- Email
+- Message</code></pre>
+          <ul class="legende-code">
+            <li><code>new</code> crée un objet qui survit à la fin du bloc et renvoie son adresse</li>
+            <li><strong>Autant de <code>delete</code> que de <code>new</code></strong>, sinon la mémoire n'est jamais libérée : c'est une <strong>fuite de mémoire</strong></li>
+            <li>Sans <code>virtual</code> devant <code>~Message()</code>, la partie <code>Email</code> ne serait pas détruite : une classe mère polymorphe a <strong>toujours</strong> un destructeur virtuel</li>
+            <li>En C++ moderne, <a href="https://cppreference.com/w/cpp/memory/unique_ptr.html" target="_blank"><code>std::unique_ptr</code></a> détruit l'objet tout seul</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- #6 LES CLASSES ABSTRAITES                                          -->
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">#6</div>
+    <h2>Les classes abstraites</h2>
+    <div class="sous-titre">Héritage et polymorphisme</div>
+  </section>
+
+  <section>
+    <h2>La méthode virtuelle pure</h2>
+    <div class="corps">
+      <div class="colonnes texte-code">
+        <ul class="dense">
+          <li>Une évaluation a une note. Mais comment calculer la note d'une évaluation « en général » ? Elle dépend du type : partiel, quiz, projet…</li>
+          <li>On déclare la méthode sans l'écrire, avec <code>= 0</code> : c'est une méthode <strong>virtuelle pure</strong>. Chaque classe fille <strong>doit</strong> l'écrire</li>
+          <li>Une classe qui a au moins une méthode virtuelle pure est une <strong>classe abstraite</strong> : on ne peut pas créer d'objet de ce type</li>
+        </ul>
+        <div>
+          <pre data-titre="Dans la classe Evaluation"><code class="language-plaintext">virtual double score() const = 0;</code></pre>
+          <pre data-titre="Dans main"><code class="language-plaintext">Evaluation oral("Oral");</code></pre>
+          <pre class="terminal mini" data-titre="Terminal"><code class="nohighlight" data-noescape>error: cannot declare variable 'oral'
+to be of abstract type 'Evaluation'</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Une classe abstraite en pratique</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <pre data-titre="evaluations.cpp (1/4)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+class Evaluation {
+protected:
+    string label;
+
+public:
+    Evaluation(string newLabel)
+        : label(newLabel) {
+    }
+    virtual ~Evaluation() {
+    }
+    virtual double score() const = 0;
+    void display() const {
+        cout &lt;&lt; label &lt;&lt; " : " &lt;&lt; score()
+             &lt;&lt; "/20" &lt;&lt; endl;
+    }
+};
+        </code></pre>
+        <div>
+          <pre data-titre="evaluations.cpp (2/4)"><code class="language-cpp" data-trim>
+class Exam : public Evaluation {
+private:
+    double grade;
+
+public:
+    Exam(string newLabel, double value)
+        : Evaluation(newLabel), grade(value) {
+    }
+    double score() const override {
+        return grade;
+    }
+};
+          </code></pre>
+          <ul class="legende-code">
+            <li><code>display()</code> n'est pas virtuelle, mais elle appelle <code>score()</code>, qui l'est : chaque évaluation affiche sa propre note</li>
+            <li><code>Exam</code> écrit <code>score()</code> : elle n'est plus abstraite, on peut créer des examens</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Une classe abstraite en pratique (suite)</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <pre data-titre="evaluations.cpp (3/4)"><code class="language-cpp" data-trim>
+class Quiz : public Evaluation {
+private:
+    int correct;
+    int total;
+
+public:
+    Quiz(string newLabel, int good, int count)
+        : Evaluation(newLabel), correct(good),
+          total(count) {
+    }
+    double score() const override {
+        return 20.0 * correct / total;
+    }
+};
+
+int main() {
+    Exam partial("Partiel", 14);
+    Quiz kahoot("Kahoot", 8, 10);
+    vector&lt;Evaluation*&gt; evaluations;
+    evaluations.push_back(&amp;partial);
+    evaluations.push_back(&amp;kahoot);
+        </code></pre>
+        <div>
+          <pre data-titre="evaluations.cpp (4/4)"><code class="language-cpp" data-trim>    double sum = 0;
+    for (Evaluation* evaluation : evaluations) {
+        evaluation-&gt;display();
+        sum = sum + evaluation-&gt;score();
+    }
+    cout &lt;&lt; "Moyenne : "
+         &lt;&lt; sum / evaluations.size() &lt;&lt; endl;
+    return 0;
+}</code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="evaluations.cpp"><code class="nohighlight" data-noescape>Partiel : 14/20
+Kahoot : 16/20
+Moyenne : 15</code></pre>
+          <ul class="legende-code">
+            <li>La boucle ne sait pas quel type d'évaluation elle traite : c'est le polymorphisme qui choisit le bon <code>score()</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Virtuelle ou virtuelle pure ?</h2>
+    <div class="corps">
+      <table class="dense">
+        <tr><th></th><th>Méthode virtuelle</th><th>Méthode virtuelle pure</th></tr>
+        <tr><td>Écriture</td><td><code>virtual void introduce() const;</code></td><td><code>virtual double score() const = 0;</code></td></tr>
+        <tr><td>Code dans la mère</td><td>oui, une version par défaut</td><td>aucun</td></tr>
+        <tr><td>Dans la fille</td><td>elle <strong>peut</strong> la redéfinir</td><td>elle <strong>doit</strong> l'écrire, sinon elle est abstraite elle aussi</td></tr>
+        <tr><td>Objets de la mère</td><td>possibles</td><td><strong>impossibles</strong> : la classe est abstraite</td></tr>
+      </table>
+      <div class="encadre marine" style="margin-top: 16px;">
+        Une classe abstraite sert de <strong>contrat</strong> : elle garantit que toutes ses filles savent faire certaines actions, chacune à sa manière.
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Récapitulatif</h2>
+    <div class="corps">
+      <table class="dense">
+        <tr><th>Notion</th><th>En C++</th></tr>
+        <tr><td>Hériter</td><td><code>class Student : public Person { … };</code> (« un étudiant <strong>est une</strong> personne »)</td></tr>
+        <tr><td>Constructeur de la fille</td><td><code>Student(…) : Person(newName), group(newGroup) {}</code></td></tr>
+        <tr><td>Accès réservé à la classe et à ses filles</td><td><code>protected</code></td></tr>
+        <tr><td>Appeler la version de la mère</td><td><code>Person::introduce();</code></td></tr>
+        <tr><td>Héritage multiple</td><td><code>class Apprentice : public Student, public Employee</code></td></tr>
+        <tr><td>Polymorphisme</td><td>méthode <code>virtual</code> + référence ou pointeur, <code>override</code> dans la fille</td></tr>
+        <tr><td>Collection hétérogène</td><td><code>vector&lt;Person*&gt;</code>, <code>push_back(&amp;chris)</code>, <code>person-&gt;introduce()</code></td></tr>
+        <tr><td>Classe abstraite</td><td>au moins une méthode virtuelle pure <code>= 0</code>, destructeur <code>virtual</code></td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>À vous de jouer : TP2 et TP3</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div class="carte pleine">
+          <h3>TP2 – Les classes de héros</h3>
+          Guerrier, mage et paladin héritent de <code>Hero</code>. Le paladin hérite aussi d'une classe de magie : héritage multiple.
+        </div>
+        <div class="carte pleine">
+          <h3>TP3 – L'arène</h3>
+          <code>Hero</code> devient abstraite et une arène fait combattre une collection de héros grâce au polymorphisme.
+        </div>
+      </div>
+      <ul style="margin-top: 22px;">
+        <li>Énoncés : <a href="../tp/tp2.html" target="_blank"><strong>TP2</strong></a> et <a href="../tp/tp3.html" target="_blank"><strong>TP3</strong></a></li>
+        <li>Un commit et un push à <strong>chaque étape terminée</strong>. Projet complet le <strong>15 décembre à 11h00</strong></li>
+      </ul>
+    </div>
+  </section>
+
+  <section data-layout="titre">
+    <h1>Des questions ?</h1>
+    <div class="sous-titre">
+      Chris CHEVALIER<br>
+      chris.chevalier@ecole-hexagone.com
+    </div>
+  </section>
+
+</div>
+</div>
+
+<script src="../assets/vendor/reveal/dist/reveal.js"></script>
+<script src="../assets/vendor/reveal/plugin/highlight/highlight.js"></script>
+<script src="../assets/vendor/reveal/plugin/notes/notes.js"></script>
+<script src="../assets/js/hexagone.js"></script>
+</body>
+</html>

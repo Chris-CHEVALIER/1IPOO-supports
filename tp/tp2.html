@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TP2 – Les classes de héros – 1IPOO</title>
+  <link rel="stylesheet" href="../assets/css/enonce.css">
+</head>
+<body>
+
+<header class="entete">
+  <div class="panneau"><img src="../assets/charte/logo-hexagone.png" alt="École Hexagone"></div>
+  <div class="titre">
+    <h1>TP2 – Les classes de héros</h1>
+    <p><span class="code-module">1IPOO</span> – Projet fil rouge « Les Chroniques d'Ardelune » · Mercredi 2 décembre</p>
+  </div>
+</header>
+
+<main>
+
+  <h3>Contexte</h3>
+  <p>
+    Les duels d'entraînement ont fait leurs preuves : la guilde d'Ardelune accueille désormais des aventuriers de plusieurs <strong>classes</strong>.
+    Les guerriers frappent plus fort quand ils sont blessés, les mages lancent des sorts et les paladins, mi-guerriers mi-prêtres, soignent leurs alliés.
+  </p>
+  <p>
+    Tous restent des héros : ils ont des PV, des potions et une arme. Plutôt que de tout réécrire, vous allez les faire <strong>hériter</strong> de la classe <code>Hero</code> du TP1. 🧙
+  </p>
+
+  <div class="encadre marine">
+    <span class="intitule">Ce TP en bref</span>
+    <ul>
+      <li><strong>Objectifs</strong> : créer des classes filles, appeler le constructeur de la classe mère, utiliser <code>protected</code>, redéfinir une méthode et mettre en œuvre l'<strong>héritage multiple</strong>.</li>
+      <li>Vous continuez dans le <strong>même dépôt</strong> que le TP1. Chaque nouvelle classe a son <code>.hpp</code> et son <code>.cpp</code>.</li>
+      <li>Les programmes d'essai remplacent temporairement le contenu de <code>main.cpp</code>. Gardez une copie de votre duel du TP1 : il revient à l'étape 6.</li>
+      <li>Un commit et un push à <strong>chaque étape terminée</strong>.</li>
+    </ul>
+  </div>
+
+  <nav class="sommaire">
+    <a href="#etape-1"><span class="n">Étape 1</span><br>Préparer Hero</a>
+    <a href="#etape-2"><span class="n">Étape 2</span><br>Le guerrier</a>
+    <a href="#etape-3"><span class="n">Étape 3</span><br>La magie</a>
+    <a href="#etape-4"><span class="n">Étape 4</span><br>Le mage</a>
+    <a href="#etape-5"><span class="n">Étape 5</span><br>Le paladin</a>
+    <a href="#etape-6"><span class="n">Étape 6</span><br>Entraînement et duel</a>
+    <a href="#bonus"><span class="n">Bonus</span><br>Pour aller plus loin</a>
+  </nav>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-1">
+    <h2><span class="num">1</span> Préparer la classe Hero</h2>
+    <div class="meta"><span class="etiquette clair">protected</span></div>
+
+    <p>Les classes filles auront besoin des attributs de <code>Hero</code>. Dans <code>Hero.hpp</code> :</p>
+    <ol>
+      <li>passez les cinq attributs de <code>private</code> à <strong><code>protected</code></strong> ;</li>
+      <li>ajoutez une méthode publique <code>void heal(int amount)</code> qui rend <code>amount</code> PV sans dépasser <code>maxHealth</code>. Une valeur négative est ignorée ;</li>
+      <li>dans <code>drinkPotion()</code>, remplacez le calcul des PV par un appel à <code>heal(30)</code> : le code n'est écrit qu'une fois.</li>
+    </ol>
+
+    <pre data-titre="main.cpp – essai de l'étape 1"><code class="language-cpp">
+      #include "Hero.hpp"
+
+      int main() {
+          Hero aria("Aria", 100, Weapon("Épée courte", 12));
+          aria.takeDamage(50);
+          aria.heal(20);
+          aria.heal(-5);
+          aria.display();
+          aria.heal(100);
+          aria.display();
+          return 0;
+      }
+    </code></pre>
+    <pre data-titre="Affichage attendu"><code class="nohighlight">Aria – 70/100 PV – 3 potion(s) – Épée courte (12 dégâts)
+Aria – 100/100 PV – 3 potion(s) – Épée courte (12 dégâts)
+Aria quitte l'aventure.</code></pre>
+
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li>le programme d'essai affiche exactement les trois lignes attendues ;</li>
+        <li>les attributs sont <code>protected</code> : <code>main</code> ne peut toujours pas les modifier ;</li>
+        <li>vous avez fait un commit « Hero prêt pour l'héritage » et vous l'avez poussé.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-2">
+    <h2><span class="num">2</span> Le guerrier</h2>
+    <div class="meta"><span class="etiquette clair">Héritage · constructeur de la mère · redéfinition</span></div>
+
+    <p>Créez la classe <code>Warrior</code> dans <code>Warrior.hpp</code> et <code>Warrior.cpp</code>. Un guerrier <strong>est un</strong> héros :</p>
+    <table>
+      <tr><th>Élément</th><th>Rôle</th></tr>
+      <tr><td><code>class Warrior : public Hero</code></td><td>le guerrier hérite de tout ce que sait faire un héros</td></tr>
+      <tr><td><code>Warrior(std::string newName, Weapon newWeapon)</code></td><td>appelle le constructeur de <code>Hero</code> avec <strong>130 PV</strong> maximum</td></tr>
+      <tr><td><code>void attack(Hero&amp; target) const</code></td><td>redéfinit l'attaque : elle appelle d'abord l'attaque de <code>Hero</code>, puis, si le guerrier a <strong>moins de la moitié</strong> de ses PV, inflige 5 dégâts de plus et affiche <code>Brom entre en rage : 5 dégâts de plus !</code></td></tr>
+    </table>
+
+    <pre data-titre="main.cpp – essai de l'étape 2"><code class="language-cpp">
+      #include "Warrior.hpp"
+
+      int main() {
+          Warrior brom("Brom", Weapon("Hache de guerre", 15));
+          Hero dummy("Mannequin", 200, Weapon());
+          brom.display();
+          brom.attack(dummy);
+          brom.takeDamage(70);
+          brom.attack(dummy);
+          dummy.display();
+          return 0;
+      }
+    </code></pre>
+    <pre data-titre="Affichage attendu"><code class="nohighlight">Brom – 130/130 PV – 3 potion(s) – Hache de guerre (15 dégâts)
+Brom frappe Mannequin avec Hache de guerre : 15 dégâts.
+Brom frappe Mannequin avec Hache de guerre : 15 dégâts.
+Brom entre en rage : 5 dégâts de plus !
+Mannequin – 165/200 PV – 3 potion(s) – Bâton de marche (5 dégâts)
+Mannequin quitte l'aventure.
+Brom quitte l'aventure.</code></pre>
+
+    <details>
+      <summary>Indices</summary>
+      <ul>
+        <li>Le constructeur tient en une ligne : <code>Warrior::Warrior(string newName, Weapon newWeapon) : Hero(newName, 130, newWeapon) {}</code>.</li>
+        <li><code>Hero::attack(target);</code> appelle la version de la classe mère sans recopier son code.</li>
+        <li>Le guerrier lit <code>health</code> et <code>maxHealth</code> directement : ils sont <code>protected</code>.</li>
+      </ul>
+    </details>
+
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li>le programme d'essai affiche exactement les sept lignes attendues ;</li>
+        <li><code>Warrior</code> ne redéclare aucun attribut de <code>Hero</code> ;</li>
+        <li>vous avez fait un commit « Classe Warrior » et vous l'avez poussé.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-3">
+    <h2><span class="num">3</span> La magie</h2>
+    <div class="meta"><span class="etiquette clair">Une classe « capacité »</span></div>
+
+    <p>
+      Les mages et les paladins utilisent du <strong>mana</strong>, une énergie magique qui se dépense à chaque sort. Plutôt que d'écrire le mana deux fois,
+      créez une classe <code>Spellcaster</code> (lanceur de sorts) dans <code>Spellcaster.hpp</code> et <code>Spellcaster.cpp</code>.
+      Ce n'est <strong>pas</strong> un héros : c'est une capacité que d'autres classes pourront ajouter.
+    </p>
+    <table>
+      <tr><th>Élément</th><th>Rôle</th></tr>
+      <tr><td><code>int mana</code> et <code>int maxMana</code> <span class="etiquette clair">protected</span></td><td>mana actuel et maximum</td></tr>
+      <tr><td><code>Spellcaster(int newMaxMana)</code></td><td><code>maxMana</code> est ramené entre 0 et 100, puis le mana commence au maximum</td></tr>
+      <tr><td><code>int getMana() const</code></td><td>accesseur</td></tr>
+      <tr><td><code>bool spendMana(int cost)</code></td><td>retire <code>cost</code> du mana et renvoie <code>true</code>. Refuse et renvoie <code>false</code> si le coût est négatif ou supérieur au mana restant</td></tr>
+      <tr><td><code>void displayMana() const</code></td><td>affiche <code>&nbsp;&nbsp;&nbsp;Mana : 20/50</code> (trois espaces au début) puis passe à la ligne</td></tr>
+    </table>
+
+    <pre data-titre="main.cpp – essai de l'étape 3"><code class="language-cpp">
+      #include "Spellcaster.hpp"
+      #include &lt;iostream&gt;
+      using namespace std;
+
+      int main() {
+          Spellcaster magic(50);
+          cout &lt;&lt; magic.spendMana(30) &lt;&lt; " ";
+          cout &lt;&lt; magic.spendMana(30) &lt;&lt; " ";
+          cout &lt;&lt; magic.spendMana(-10) &lt;&lt; endl;
+          magic.displayMana();
+          Spellcaster tooMuch(500);
+          tooMuch.displayMana();
+          return 0;
+      }
+    </code></pre>
+    <pre data-titre="Affichage attendu"><code class="nohighlight">1 0 0
+   Mana : 20/50
+   Mana : 100/100</code></pre>
+
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li>le programme d'essai affiche exactement les trois lignes attendues ;</li>
+        <li><code>Spellcaster.hpp</code> n'inclut pas <code>Hero.hpp</code> : les deux classes sont indépendantes ;</li>
+        <li>vous avez fait un commit « Classe Spellcaster » et vous l'avez poussé.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-4">
+    <h2><span class="num">4</span> Le mage</h2>
+    <div class="meta"><span class="etiquette clair">Héritage multiple · masquage</span></div>
+
+    <p>Un mage <strong>est un</strong> héros <strong>et</strong> un lanceur de sorts. Créez la classe <code>Mage</code> dans <code>Mage.hpp</code> et <code>Mage.cpp</code> :</p>
+    <table>
+      <tr><th>Élément</th><th>Rôle</th></tr>
+      <tr><td><code>class Mage : public Hero, public Spellcaster</code></td><td>héritage multiple</td></tr>
+      <tr><td><code>Mage(std::string newName, Weapon newWeapon)</code></td><td>appelle les <strong>deux</strong> constructeurs mères : 80 PV maximum, 60 de mana</td></tr>
+      <tr><td><code>bool castFireball(Hero&amp; target)</code></td><td>dépense 20 de mana et inflige 25 dégâts à la cible : <code>Aria lance une boule de feu sur Brom : 25 dégâts.</code>
+        Sans assez de mana, affiche <code>Aria n'a plus assez de mana !</code> et renvoie <code>false</code></td></tr>
+      <tr><td><code>void display() const</code></td><td>affiche le héros, puis la ligne de mana</td></tr>
+    </table>
+
+    <pre data-titre="main.cpp – essai de l'étape 4"><code class="language-cpp">
+      #include "Mage.hpp"
+
+      int main() {
+          Mage aria("Aria", Weapon("Bâton runique", 6));
+          Hero dummy("Mannequin", 200, Weapon());
+          aria.display();
+          for (int i = 0; i &lt; 4; i++) {
+              aria.castFireball(dummy);
+          }
+          aria.attack(dummy);
+          aria.display();
+          dummy.display();
+          return 0;
+      }
+    </code></pre>
+    <pre data-titre="Affichage attendu"><code class="nohighlight">Aria – 80/80 PV – 3 potion(s) – Bâton runique (6 dégâts)
+   Mana : 60/60
+Aria lance une boule de feu sur Mannequin : 25 dégâts.
+Aria lance une boule de feu sur Mannequin : 25 dégâts.
+Aria lance une boule de feu sur Mannequin : 25 dégâts.
+Aria n'a plus assez de mana !
+Aria frappe Mannequin avec Bâton runique : 6 dégâts.
+Aria – 80/80 PV – 3 potion(s) – Bâton runique (6 dégâts)
+   Mana : 0/60
+Mannequin – 119/200 PV – 3 potion(s) – Bâton de marche (5 dégâts)
+Mannequin quitte l'aventure.
+Aria quitte l'aventure.</code></pre>
+
+    <details>
+      <summary>Indices</summary>
+      <ul>
+        <li>Liste d'initialisation : <code>Hero(newName, 80, newWeapon), Spellcaster(60)</code>.</li>
+        <li>Dans <code>display()</code>, <code>Hero::display();</code> puis <code>displayMana();</code>.</li>
+        <li><code>spendMana(20)</code> fait la vérification et la dépense en un seul appel : utilisez sa valeur de retour.</li>
+      </ul>
+    </details>
+
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li>le programme d'essai affiche exactement les lignes attendues ;</li>
+        <li>le mage peut toujours attaquer avec son arme : <code>attack</code> est héritée de <code>Hero</code> ;</li>
+        <li>vous avez fait un commit « Classe Mage » et vous l'avez poussé.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-5">
+    <h2><span class="num">5</span> Le paladin</h2>
+    <div class="meta"><span class="etiquette clair">Héritage multiple · chaîne d'héritage</span></div>
+
+    <p>Un paladin <strong>est un</strong> guerrier (il entre en rage) <strong>et</strong> un lanceur de sorts. Créez la classe <code>Paladin</code> dans <code>Paladin.hpp</code> et <code>Paladin.cpp</code> :</p>
+    <table>
+      <tr><th>Élément</th><th>Rôle</th></tr>
+      <tr><td><code>class Paladin : public Warrior, public Spellcaster</code></td><td>héritage multiple, dont une mère qui hérite elle-même de <code>Hero</code></td></tr>
+      <tr><td><code>Paladin(std::string newName, Weapon newWeapon)</code></td><td>appelle le constructeur de <code>Warrior</code> et celui de <code>Spellcaster</code> avec 40 de mana</td></tr>
+      <tr><td><code>bool bless(Hero&amp; ally)</code></td><td>dépense 15 de mana et rend 25 PV à l'allié : <code>Elwin bénit Aria : 65 PV.</code> (les PV de l'allié après le soin).
+        Sans assez de mana : <code>Elwin n'a plus assez de mana !</code></td></tr>
+      <tr><td><code>void display() const</code></td><td>affiche le héros, puis la ligne de mana</td></tr>
+    </table>
+
+    <pre data-titre="main.cpp – essai de l'étape 5"><code class="language-cpp">
+      #include "Paladin.hpp"
+
+      int main() {
+          Paladin elwin("Elwin", Weapon("Marteau sacré", 10));
+          Hero aria("Aria", 100, Weapon("Épée courte", 12));
+          aria.takeDamage(60);
+          elwin.bless(aria);
+          elwin.takeDamage(80);
+          elwin.attack(aria);
+          elwin.display();
+          return 0;
+      }
+    </code></pre>
+    <pre data-titre="Affichage attendu"><code class="nohighlight">Elwin bénit Aria : 65 PV.
+Elwin frappe Aria avec Marteau sacré : 10 dégâts.
+Elwin entre en rage : 5 dégâts de plus !
+Elwin – 50/130 PV – 3 potion(s) – Marteau sacré (10 dégâts)
+   Mana : 25/40
+Aria quitte l'aventure.
+Elwin quitte l'aventure.</code></pre>
+
+    <details>
+      <summary>Indices</summary>
+      <ul>
+        <li>Le paladin hérite de l'attaque du guerrier, rage comprise : vous n'avez rien à écrire pour cela.</li>
+        <li>Le soin passe par la méthode publique <code>heal()</code> de l'allié, écrite à l'étape 1.</li>
+        <li>Si <code>Warrior</code> et <code>Spellcaster</code> avaient toutes les deux une méthode <code>display()</code>, l'appel serait ambigu. Ici, <code>Spellcaster</code> a <code>displayMana()</code> : pas de conflit.</li>
+      </ul>
+    </details>
+
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li>le programme d'essai affiche exactement les lignes attendues ;</li>
+        <li>aucune ligne de <code>Warrior</code> ni de <code>Spellcaster</code> n'est recopiée dans <code>Paladin</code> ;</li>
+        <li>vous avez fait un commit « Classe Paladin » et vous l'avez poussé.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-6">
+    <h2><span class="num">6</span> L'entraînement et le duel</h2>
+    <div class="meta"><span class="etiquette clair">Synthèse</span></div>
+
+    <p>Le nouveau <code>main.cpp</code> enchaîne une démonstration des trois classes, puis le duel du TP1.</p>
+    <ol>
+      <li>Ajoutez au-dessus de <code>main</code> cette fonction d'entraînement, et incluez <code>Warrior.hpp</code>, <code>Mage.hpp</code> et <code>Paladin.hpp</code> :
+        <pre data-titre="main.cpp – fonction training()"><code class="language-cpp">
+          // Démonstration des capacités de chaque classe de héros.
+          void training() {
+              cout &lt;&lt; "=== Les Chroniques d'Ardelune : l'entraînement ===" &lt;&lt; endl;
+              Warrior brom("Brom", Weapon("Hache de guerre", 15));
+              Mage aria("Aria", Weapon("Bâton runique", 6));
+              Paladin elwin("Elwin", Weapon("Marteau sacré", 10));
+              brom.display();
+              aria.display();
+              elwin.display();
+
+              cout &lt;&lt; endl &lt;&lt; "--- Les sorts d'Aria ---" &lt;&lt; endl;
+              for (int i = 0; i &lt; 4; i++) {
+                  aria.castFireball(brom);
+              }
+
+              cout &lt;&lt; endl &lt;&lt; "--- La rage de Brom ---" &lt;&lt; endl;
+              brom.display();
+              brom.attack(aria);
+
+              cout &lt;&lt; endl &lt;&lt; "--- La bénédiction d'Elwin ---" &lt;&lt; endl;
+              for (int i = 0; i &lt; 3; i++) {
+                  elwin.bless(brom);
+              }
+              elwin.display();
+              cout &lt;&lt; endl;
+          }
+        </code></pre>
+      </li>
+      <li>Remettez les fonctions <code>readChoice()</code> et <code>playTurn(Hero&amp; active, Hero&amp; opponent)</code> de votre duel du TP1, sans les modifier.</li>
+      <li>Dans <code>main</code>, appelez <code>training()</code>, puis faites s'affronter <strong>Brom</strong> (<code>Warrior</code>, « Hache de guerre », 15 dégâts) et <strong>Aria</strong> (<code>Mage</code>, « Bâton runique », 6 dégâts).
+        Juste avant le duel, Brom arrive blessé : <code>brom.takeDamage(70);</code>.</li>
+    </ol>
+    <pre data-titre="Affichage attendu de l'entraînement"><code class="nohighlight">=== Les Chroniques d'Ardelune : l'entraînement ===
+Brom – 130/130 PV – 3 potion(s) – Hache de guerre (15 dégâts)
+Aria – 80/80 PV – 3 potion(s) – Bâton runique (6 dégâts)
+   Mana : 60/60
+Elwin – 130/130 PV – 3 potion(s) – Marteau sacré (10 dégâts)
+   Mana : 40/40
+
+--- Les sorts d'Aria ---
+Aria lance une boule de feu sur Brom : 25 dégâts.
+Aria lance une boule de feu sur Brom : 25 dégâts.
+Aria lance une boule de feu sur Brom : 25 dégâts.
+Aria n'a plus assez de mana !
+
+--- La rage de Brom ---
+Brom – 55/130 PV – 3 potion(s) – Hache de guerre (15 dégâts)
+Brom frappe Aria avec Hache de guerre : 15 dégâts.
+Brom entre en rage : 5 dégâts de plus !
+
+--- La bénédiction d'Elwin ---
+Elwin bénit Brom : 80 PV.
+Elwin bénit Brom : 105 PV.
+Elwin n'a plus assez de mana !
+Elwin – 130/130 PV – 3 potion(s) – Marteau sacré (10 dégâts)
+   Mana : 10/40
+
+Elwin quitte l'aventure.
+Aria quitte l'aventure.
+Brom quitte l'aventure.</code></pre>
+    <pre data-titre="Début du duel"><code class="nohighlight">--- Tour : Brom ---
+Brom – 60/130 PV – 3 potion(s) – Hache de guerre (15 dégâts)
+[1] Attaquer  [2] Boire une potion
+Votre choix : <span class="saisie">1</span>
+Brom frappe Aria avec Hache de guerre : 15 dégâts.
+
+--- Tour : Aria ---
+Aria – 65/80 PV – 3 potion(s) – Bâton runique (6 dégâts)
+[1] Attaquer  [2] Boire une potion
+Votre choix : <span class="saisie">1</span>
+Aria frappe Brom avec Bâton runique : 6 dégâts.</code></pre>
+
+    <div class="encadre ambre">
+      <span class="intitule">Une énigme à résoudre</span>
+      Pendant le duel, Brom n'a que 60 PV sur 130… et pourtant il <strong>n'entre jamais en rage</strong>. La ligne de mana d'Aria n'apparaît pas non plus.
+      Dans l'entraînement, tout fonctionnait. Pourquoi ? Indice : regardez le type des paramètres de <code>playTurn</code>.
+      Écrivez votre explication dans une section « Questions » du README. Le TP3 résout ce problème.
+    </div>
+
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li>l'entraînement affiche exactement les lignes attendues ;</li>
+        <li>le duel se joue jusqu'au bout, comme au TP1 ;</li>
+        <li>le README contient votre explication de l'énigme et sa liste de fonctionnalités est à jour ;</li>
+        <li>vous avez fait un commit « Entraînement et duel » et vous l'avez poussé.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="bonus">
+    <h2><span class="num">+</span> Pour aller plus loin</h2>
+    <div class="meta"><span class="etiquette ambre">Facultatif</span></div>
+
+    <h3>Bonus 1 – L'archer</h3>
+    <ul>
+      <li>Créez une classe <code>Archer</code> qui hérite de <code>Hero</code> (100 PV) avec un attribut <code>arrows</code> (10 flèches).</li>
+      <li>Sa méthode <code>shoot(Hero&amp; target)</code> consomme une flèche et inflige les dégâts de l'arme plus 8. Sans flèche, elle refuse.</li>
+    </ul>
+
+    <h3>Bonus 2 – La potion de mana</h3>
+    <ul>
+      <li>Ajoutez à <code>Spellcaster</code> une méthode <code>restoreMana(int amount)</code> et un stock de deux potions de mana.</li>
+    </ul>
+
+    <h3>Bonus 3 – Le diagramme de classes</h3>
+    <ul>
+      <li>Dessinez dans le README le diagramme de vos classes, avec <a href="https://mermaid.js.org/syntax/classDiagram.html" target="_blank">Mermaid</a>, que GitHub affiche directement dans un fichier Markdown.</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer class="pied">Chris CHEVALIER · 1IPOO – Initiation à la programmation orientée objet · École Hexagone</footer>
+
+<script src="../assets/vendor/reveal/plugin/highlight/highlight.js"></script>
+<script src="../assets/js/enonce.js"></script>
+</body>
+</html>

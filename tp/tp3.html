@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TP3 – L'arène – 1IPOO</title>
+  <link rel="stylesheet" href="../assets/css/enonce.css">
+</head>
+<body>
+
+<header class="entete">
+  <div class="panneau"><img src="../assets/charte/logo-hexagone.png" alt="École Hexagone"></div>
+  <div class="titre">
+    <h1>TP3 – L'arène</h1>
+    <p><span class="code-module">1IPOO</span> – Projet fil rouge « Les Chroniques d'Ardelune » · Mercredi 2 décembre</p>
+  </div>
+</header>
+
+<main>
+
+  <h3>Contexte</h3>
+  <p>
+    Pour choisir ceux qui partiront affronter la brume grise, la guilde organise un grand tournoi dans l'<strong>arène d'Ardelune</strong>.
+    Guerriers, mages et paladins s'y affrontent tous ensemble, chacun à son tour, jusqu'à ce qu'il n'en reste qu'un.
+  </p>
+  <p>
+    L'arène ne connaît que des « héros ». Pourtant, chaque combattant doit agir selon sa classe : le guerrier entre en rage, le mage lance ses sorts…
+    C'est exactement ce que permet le <strong>polymorphisme</strong>. 🏟️
+  </p>
+
+  <div class="encadre marine">
+    <span class="intitule">Ce TP en bref</span>
+    <ul>
+      <li><strong>Objectifs</strong> : utiliser des méthodes virtuelles, transformer <code>Hero</code> en <strong>classe abstraite</strong> et manipuler une <strong>collection d'objets</strong> de types différents.</li>
+      <li>Vous continuez dans le même dépôt. Ce TP termine le projet que vous présenterez en soutenance le <strong>15 décembre</strong> (dernier commit à <strong>11h00</strong>).</li>
+      <li>Un commit et un push à <strong>chaque étape terminée</strong>.</li>
+    </ul>
+  </div>
+
+  <nav class="sommaire">
+    <a href="#etape-1"><span class="n">Étape 1</span><br>Méthodes virtuelles</a>
+    <a href="#etape-2"><span class="n">Étape 2</span><br>Classe abstraite</a>
+    <a href="#etape-3"><span class="n">Étape 3</span><br>L'arène</a>
+    <a href="#etape-4"><span class="n">Étape 4</span><br>Le tournoi</a>
+    <a href="#bonus"><span class="n">Bonus</span><br>Pour aller plus loin</a>
+  </nav>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-1">
+    <h2><span class="num">1</span> Les méthodes virtuelles</h2>
+    <div class="meta"><span class="etiquette clair">virtual · override · destructeur virtuel</span></div>
+
+    <p>L'énigme du TP2 vient de la <strong>résolution statique</strong> : <code>playTurn</code> reçoit des <code>Hero&amp;</code>, donc le compilateur appelle toujours les méthodes de <code>Hero</code>. Corrigez-la :</p>
+    <ol>
+      <li>dans <code>Hero.hpp</code>, ajoutez <code>virtual</code> devant <code>attack</code>, <code>display</code> et le destructeur <code>~Hero()</code> ;</li>
+      <li>ajoutez <code>override</code> à la fin des méthodes qui les redéfinissent : <code>attack</code> dans <code>Warrior.hpp</code>, <code>display</code> dans <code>Mage.hpp</code> et <code>Paladin.hpp</code> ;</li>
+      <li>relancez votre programme du TP2 : pendant le duel, Brom entre maintenant en rage et le mana d'Aria s'affiche.</li>
+    </ol>
+
+    <pre data-titre="main.cpp – essai de l'étape 1"><code class="language-cpp">
+      #include "Mage.hpp"
+      #include "Warrior.hpp"
+
+      // Fonctions qui ne connaissent que la classe Hero.
+      void strike(const Hero&amp; attacker, Hero&amp; target) {
+          attacker.attack(target);
+      }
+
+      void show(const Hero&amp; hero) {
+          hero.display();
+      }
+
+      int main() {
+          Warrior brom("Brom", Weapon("Hache de guerre", 15));
+          Mage aria("Aria", Weapon("Bâton runique", 6));
+          brom.takeDamage(70);
+          strike(brom, aria);
+          show(aria);
+          return 0;
+      }
+    </code></pre>
+    <pre data-titre="Affichage attendu"><code class="nohighlight">Brom frappe Aria avec Hache de guerre : 15 dégâts.
+Brom entre en rage : 5 dégâts de plus !
+Aria – 60/80 PV – 3 potion(s) – Bâton runique (6 dégâts)
+   Mana : 60/60
+Aria quitte l'aventure.
+Brom quitte l'aventure.</code></pre>
+
+    <details>
+      <summary>Indices</summary>
+      <ul>
+        <li><code>virtual</code> et <code>override</code> s'écrivent seulement dans les <code>.hpp</code>, pas dans les <code>.cpp</code>.</li>
+        <li>Une faute de frappe dans le nom d'une méthode marquée <code>override</code> provoque une erreur de compilation : c'est voulu, elle vous protège.</li>
+        <li>Le destructeur virtuel garantit que la partie fille d'un héros est bien détruite, même à travers un pointeur <code>Hero*</code>.</li>
+      </ul>
+    </details>
+
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li>le programme d'essai affiche exactement les lignes attendues ;</li>
+        <li>dans le duel du TP2, Brom entre en rage quand il a moins de 65 PV ;</li>
+        <li>vous avez fait un commit « Méthodes virtuelles » et vous l'avez poussé.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-2">
+    <h2><span class="num">2</span> La classe abstraite</h2>
+    <div class="meta"><span class="etiquette clair">Méthodes virtuelles pures · classe abstraite</span></div>
+
+    <p>Dans l'arène, chaque héros a une <strong>capacité spéciale</strong> propre à sa classe. Un « héros en général » n'en a pas : <code>Hero</code> devient abstraite.</p>
+    <ol>
+      <li>Ajoutez à <code>Hero</code> deux méthodes <strong>virtuelles pures</strong> :
+        <ul>
+          <li><code>virtual bool useSpecial(Hero&amp; target) = 0;</code> : utilise la capacité spéciale sur la cible, renvoie <code>false</code> si elle est refusée ;</li>
+          <li><code>virtual std::string getClassName() const = 0;</code> : renvoie le nom de la classe en français.</li>
+        </ul>
+      </li>
+      <li>Modifiez <code>Hero::display()</code> pour afficher la classe après le nom : <code>Aria [Mage] – 80/80 PV – …</code></li>
+      <li>Écrivez ces deux méthodes dans chaque classe fille, avec <code>override</code> :</li>
+    </ol>
+    <table>
+      <tr><th>Classe</th><th><code>getClassName()</code></th><th>Capacité spéciale <code>useSpecial(target)</code></th></tr>
+      <tr><td><code>Warrior</code></td><td><code>"Guerrier"</code></td><td><strong>Coup puissant</strong> : le guerrier perd 10 PV et inflige le double des dégâts de son arme.
+        <code>Brom porte un coup puissant à Aria : 30 dégâts (et perd 10 PV).</code>
+        Refusé s'il a 10 PV ou moins : <code>Brom est trop affaibli pour un coup puissant !</code></td></tr>
+      <tr><td><code>Mage</code></td><td><code>"Mage"</code></td><td><strong>Boule de feu</strong> : appelle simplement <code>castFireball(target)</code></td></tr>
+      <tr><td><code>Paladin</code></td><td><code>"Paladin"</code></td><td><strong>Châtiment sacré</strong> : 15 de mana, inflige 15 dégâts à la cible et rend 15 PV au paladin.
+        <code>Elwin lance un châtiment sacré sur Brom : 15 dégâts, et regagne 15 PV.</code>
+        Sans assez de mana : <code>Elwin n'a plus assez de mana !</code></td></tr>
+    </table>
+
+    <pre data-titre="main.cpp – essai de l'étape 2"><code class="language-cpp">
+      #include "Mage.hpp"
+      #include "Paladin.hpp"
+      #include "Warrior.hpp"
+      #include &lt;vector&gt;
+      using namespace std;
+
+      int main() {
+          Warrior brom("Brom", Weapon("Hache de guerre", 15));
+          Mage aria("Aria", Weapon("Bâton runique", 6));
+          Paladin elwin("Elwin", Weapon("Marteau sacré", 10));
+          Warrior dummy("Mannequin", Weapon());
+          vector&lt;Hero*&gt; heroes = {&amp;brom, &amp;aria, &amp;elwin};
+
+          for (Hero* hero : heroes) {
+              hero-&gt;useSpecial(dummy);
+          }
+          for (Hero* hero : heroes) {
+              hero-&gt;display();
+          }
+          dummy.display();
+          return 0;
+      }
+    </code></pre>
+    <pre data-titre="Affichage attendu"><code class="nohighlight">Brom porte un coup puissant à Mannequin : 30 dégâts (et perd 10 PV).
+Aria lance une boule de feu sur Mannequin : 25 dégâts.
+Elwin lance un châtiment sacré sur Mannequin : 15 dégâts, et regagne 15 PV.
+Brom [Guerrier] – 120/130 PV – 3 potion(s) – Hache de guerre (15 dégâts)
+Aria [Mage] – 80/80 PV – 3 potion(s) – Bâton runique (6 dégâts)
+   Mana : 40/60
+Elwin [Paladin] – 130/130 PV – 3 potion(s) – Marteau sacré (10 dégâts)
+   Mana : 25/40
+Mannequin [Guerrier] – 60/130 PV – 3 potion(s) – Bâton de marche (5 dégâts)
+Mannequin quitte l'aventure.
+Elwin quitte l'aventure.
+Aria quitte l'aventure.
+Brom quitte l'aventure.</code></pre>
+
+    <details>
+      <summary>Indices</summary>
+      <ul>
+        <li><code>Hero::display()</code> peut appeler <code>getClassName()</code> alors que <code>Hero</code> ne l'écrit pas : à l'exécution, c'est la version de la vraie classe de l'objet qui est appelée.</li>
+        <li><code>Paladin</code> hérite de <code>Warrior</code> : sans redéfinition, il serait « Guerrier » avec un coup puissant. Il doit donc redéfinir les deux méthodes.</li>
+        <li>Les programmes d'essai du TP2 qui créent un <code>Hero</code> ne compilent plus : c'est normal, on ne peut plus créer d'objet d'une classe abstraite.</li>
+      </ul>
+    </details>
+
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li>le programme d'essai affiche exactement les lignes attendues ;</li>
+        <li>la ligne <code>Hero test("Test", 100, Weapon());</code> dans <code>main</code> provoque une erreur de compilation (essayez, puis retirez-la) ;</li>
+        <li>vous avez fait un commit « Hero abstraite » et vous l'avez poussé.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-3">
+    <h2><span class="num">3</span> L'arène</h2>
+    <div class="meta"><span class="etiquette clair">vector · pointeurs · polymorphisme</span></div>
+
+    <p>Créez la classe <code>Arena</code> dans <code>Arena.hpp</code> et <code>Arena.cpp</code>. Elle range des <strong>pointeurs</strong> vers les combattants : elle ne les copie pas, elle sait seulement où les trouver.</p>
+    <table>
+      <tr><th>Élément</th><th>Rôle</th></tr>
+      <tr><td><code>std::vector&lt;Hero*&gt; fighters</code> <span class="etiquette clair">privé</span></td><td>les combattants inscrits</td></tr>
+      <tr><td><code>void addFighter(Hero* hero)</code></td><td>inscrit un combattant (ignore <code>nullptr</code>)</td></tr>
+      <tr><td><code>int countAlive() const</code></td><td>nombre de combattants encore en vie</td></tr>
+      <tr><td><code>void displayFighters() const</code></td><td>affiche tous les combattants</td></tr>
+      <tr><td><code>Hero* chooseTarget(const Hero* active) const</code> <span class="etiquette clair">privé</span></td><td>renvoie la cible du héros actif, parmi les <strong>autres</strong> combattants en vie.
+        S'il n'en reste qu'un, elle le renvoie directement. Sinon, elle affiche <code>Cibles :  [1] Brom  [2] Elwin</code> et redemande tant que le numéro est invalide</td></tr>
+      <tr><td><code>void playTurn(Hero* active)</code> <span class="etiquette clair">privé</span></td><td>joue le tour d'un héros : <code>[1] Attaquer  [2] Capacité spéciale  [3] Boire une potion</code>.
+        Redemande tant que le choix est invalide ou que l'action est refusée. Si la cible n'a plus de PV : <code>Brom tombe au combat !</code></td></tr>
+      <tr><td><code>void fight()</code></td><td>affiche les combattants, puis fait jouer chaque héros vivant à son tour, manche après manche, jusqu'à ce qu'il n'en reste qu'un. Annonce enfin le vainqueur</td></tr>
+    </table>
+
+    <p>Déplacez la fonction <code>readChoice()</code> du TP1 au début de <code>Arena.cpp</code> : seule l'arène lit des saisies.</p>
+
+    <details>
+      <summary>Indices</summary>
+      <ul>
+        <li>Parcourir les combattants : <code>for (Hero* hero : fighters) { … }</code>. Appeler une méthode à travers un pointeur : <code>hero-&gt;isAlive()</code>.</li>
+        <li><code>attack</code> et <code>useSpecial</code> attendent une référence : passez <code>*target</code> (l'objet pointé par <code>target</code>).</li>
+        <li>Pour construire la liste des cibles, créez un <code>vector&lt;Hero*&gt;</code> local et ajoutez-y chaque héros vivant différent de <code>active</code>.</li>
+        <li>Dans <code>fight()</code>, vérifiez <code>countAlive() &gt; 1</code> avant chaque tour : le combat peut se terminer au milieu d'une manche.</li>
+      </ul>
+    </details>
+
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li><code>Arena</code> ne mentionne jamais <code>Warrior</code>, <code>Mage</code> ni <code>Paladin</code> : elle ne connaît que <code>Hero</code> ;</li>
+        <li><code>Arena.cpp</code> se compile sans avertissement ;</li>
+        <li>vous avez fait un commit « Classe Arena » et vous l'avez poussé.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-4">
+    <h2><span class="num">4</span> Le tournoi</h2>
+    <div class="meta"><span class="etiquette clair">Synthèse</span></div>
+
+    <p>Le <code>main.cpp</code> final crée trois héros, les inscrit dans l'arène et lance le combat :</p>
+    <pre data-titre="main.cpp"><code class="language-cpp">
+      #include "Arena.hpp"
+      #include "Mage.hpp"
+      #include "Paladin.hpp"
+      #include "Warrior.hpp"
+
+      int main() {
+          Mage aria("Aria", Weapon("Bâton runique", 6));
+          Warrior brom("Brom", Weapon("Hache de guerre", 15));
+          Paladin elwin("Elwin", Weapon("Marteau sacré", 10));
+
+          Arena arena;
+          arena.addFighter(&amp;aria);
+          arena.addFighter(&amp;brom);
+          arena.addFighter(&amp;elwin);
+          arena.fight();
+          return 0;
+      }
+    </code></pre>
+    <pre data-titre="Exemple d'exécution (début)"><code class="nohighlight">=== L'arène d'Ardelune : 3 combattants ===
+Aria [Mage] – 80/80 PV – 3 potion(s) – Bâton runique (6 dégâts)
+   Mana : 60/60
+Brom [Guerrier] – 130/130 PV – 3 potion(s) – Hache de guerre (15 dégâts)
+Elwin [Paladin] – 130/130 PV – 3 potion(s) – Marteau sacré (10 dégâts)
+   Mana : 40/40
+
+===== Manche 1 =====
+
+--- Tour : Aria ---
+Aria [Mage] – 80/80 PV – 3 potion(s) – Bâton runique (6 dégâts)
+   Mana : 60/60
+[1] Attaquer  [2] Capacité spéciale  [3] Boire une potion
+Votre choix : <span class="saisie">2</span>
+Cibles :  [1] Brom  [2] Elwin
+Votre cible : <span class="saisie">1</span>
+Aria lance une boule de feu sur Brom : 25 dégâts.
+
+--- Tour : Brom ---
+Brom [Guerrier] – 105/130 PV – 3 potion(s) – Hache de guerre (15 dégâts)
+[1] Attaquer  [2] Capacité spéciale  [3] Boire une potion
+Votre choix : <span class="saisie">4</span>
+Choix invalide, tapez 1, 2 ou 3.
+[1] Attaquer  [2] Capacité spéciale  [3] Boire une potion
+Votre choix : <span class="saisie">2</span>
+Cibles :  [1] Aria  [2] Elwin
+Votre cible : <span class="saisie">1</span>
+Brom porte un coup puissant à Aria : 30 dégâts (et perd 10 PV).</code></pre>
+    <pre data-titre="Exemple d'exécution (fin)"><code class="nohighlight">Elwin frappe Brom avec Marteau sacré : 10 dégâts.
+Elwin entre en rage : 5 dégâts de plus !
+Brom tombe au combat !
+
+=== Elwin remporte l'arène ! ===
+Elwin quitte l'aventure.
+Brom quitte l'aventure.
+Aria quitte l'aventure.</code></pre>
+
+    <p>Terminez par le README : cochez les fonctionnalités réalisées, ajoutez un exemple de partie et complétez la déclaration d'usage de l'IA.</p>
+
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li>un tournoi complet se joue jusqu'à la victoire d'un seul héros ;</li>
+        <li>aucune saisie ne fait planter le programme : lettres, numéro de cible inexistant, sort sans mana… ;</li>
+        <li>un héros tombé au combat ne joue plus et ne peut plus être ciblé ;</li>
+        <li>le README est à jour et vous avez fait un commit « Arène » et vous l'avez poussé.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="bonus">
+    <h2><span class="num">+</span> Pour aller plus loin</h2>
+    <div class="meta"><span class="etiquette ambre">Facultatif</span></div>
+
+    <h3>Bonus 1 – Choisir ses combattants</h3>
+    <ul>
+      <li>Au lancement, demandez le nombre de combattants, puis le nom et la classe de chacun.</li>
+      <li>Les héros sont alors créés avec <code>new</code> : pensez à les détruire avec <code>delete</code> à la fin, ou mieux, utilisez <a href="https://cppreference.com/w/cpp/memory/unique_ptr.html" target="_blank"><code>std::unique_ptr</code></a>.</li>
+    </ul>
+
+    <h3>Bonus 2 – Des adversaires automatiques</h3>
+    <ul>
+      <li>Ajoutez une méthode virtuelle <code>chooseAction()</code> : un héros contrôlé par l'ordinateur choisit seul son action et sa cible (le plus faible, par exemple).</li>
+    </ul>
+
+    <h3>Bonus 3 – Une quatrième classe</h3>
+    <ul>
+      <li>Ajoutez l'<code>Archer</code> du TP2 à l'arène : il lui suffit d'écrire <code>useSpecial</code> et <code>getClassName</code>. Constatez que la classe <code>Arena</code> n'a pas besoin d'être modifiée.</li>
+    </ul>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="auto-evaluation">
+    <h2><span class="num">✓</span> Avant la soutenance du 15 décembre</h2>
+
+    <p>Vérifiez chaque point. Je les contrôlerai en soutenance.</p>
+    <ul class="checklist">
+      <li>Le projet se compile avec <code>g++ -std=c++17 -Wall *.cpp -o ardelune</code> <strong>sans aucun avertissement</strong>.</li>
+      <li>Chaque classe a son <code>.hpp</code> et son <code>.cpp</code> ; les attributs sont <code>private</code> ou <code>protected</code>.</li>
+      <li>L'héritage simple (<code>Warrior</code>), l'héritage multiple (<code>Mage</code>, <code>Paladin</code>), les méthodes virtuelles, la classe abstraite et la collection de l'arène fonctionnent.</li>
+      <li>Aucune saisie ne fait planter le jeu.</li>
+      <li>Le README explique comment compiler et jouer, résout l'énigme du TP2 et déclare votre usage de l'IA.</li>
+      <li>Le dépôt contient un commit par étape, le dernier poussé avant le <strong>15 décembre à 11h00</strong>.</li>
+      <li>Vous pouvez expliquer <strong>chaque ligne</strong> de votre code et le modifier en direct.</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer class="pied">Chris CHEVALIER · 1IPOO – Initiation à la programmation orientée objet · École Hexagone</footer>
+
+<script src="../assets/vendor/reveal/plugin/highlight/highlight.js"></script>
+<script src="../assets/js/enonce.js"></script>
+</body>
+</html>
