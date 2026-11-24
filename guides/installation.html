@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Installer son environnement C++ – 1IPOO</title>
+  <link rel="stylesheet" href="../assets/css/enonce.css">
+</head>
+<body>
+
+<header class="entete">
+  <div class="panneau"><img src="../assets/charte/logo-hexagone.png" alt="École Hexagone"></div>
+  <div class="titre">
+    <h1>Installer son environnement C++</h1>
+    <p><span class="code-module">1IPOO</span> – Initiation à la programmation orientée objet · À faire avant le mardi 1er décembre</p>
+  </div>
+</header>
+
+<main>
+
+  <p>
+    Le module 1IPOO se fait en <strong>C++</strong>. Pour programmer dès la première heure de cours, votre ordinateur a besoin de trois outils.
+    Vous connaissez déjà le premier.
+  </p>
+  <table>
+    <tr><th>Outil</th><th>Rôle</th></tr>
+    <tr><td><strong>VS Code</strong></td><td>l'éditeur où vous écrivez le code (déjà utilisé en Python)</td></tr>
+    <tr><td><strong>Un compilateur C++</strong> (<code>g++</code>)</td><td>le programme qui <strong>traduit</strong> votre code C++ en un programme que l'ordinateur sait exécuter</td></tr>
+    <tr><td><strong>L'extension C/C++</strong> de VS Code</td><td>la coloration du code, les suggestions et le formatage automatique</td></tr>
+  </table>
+  <p class="muet" style="font-size: 14px;">
+    En Python, un <strong>interpréteur</strong> lisait votre fichier et l'exécutait ligne après ligne. En C++, un <strong>compilateur</strong> traduit d'abord tout le fichier
+    en langage machine, puis vous lancez le programme obtenu. C'est pour cela qu'il faut installer un compilateur.
+  </p>
+
+  <div class="encadre marine">
+    <span class="intitule">En bref</span>
+    <ul>
+      <li>Suivez <strong>uniquement</strong> la partie de votre système (Windows, macOS ou Linux), puis la partie « Tester ».</li>
+      <li>Comptez entre 15 et 30 minutes, surtout à cause des téléchargements.</li>
+      <li>Si quelque chose bloque, notez le message d'erreur exact et écrivez-moi : nous réglerons le problème au début du premier cours.</li>
+    </ul>
+  </div>
+
+  <nav class="sommaire">
+    <a href="#windows"><span class="n">Windows</span><br>MSYS2 et g++</a>
+    <a href="#macos"><span class="n">macOS</span><br>Outils Xcode</a>
+    <a href="#linux"><span class="n">Linux</span><br>build-essential</a>
+    <a href="#vscode"><span class="n">VS Code</span><br>Extension C/C++</a>
+    <a href="#tester"><span class="n">Tester</span><br>Premier programme</a>
+    <a href="#github"><span class="n">GitHub</span><br>Vérifier son compte</a>
+  </nav>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="windows">
+    <h2><span class="num">W</span> Windows : installer g++ avec MSYS2</h2>
+    <div class="meta"><span class="etiquette clair">Windows 10 ou 11</span></div>
+
+    <p>
+      <a href="https://www.msys2.org/" target="_blank">MSYS2</a> est un ensemble d'outils libres qui apporte le compilateur <code>g++</code> sous Windows.
+      Cette procédure suit la <a href="https://code.visualstudio.com/docs/cpp/config-mingw" target="_blank">documentation officielle de VS Code</a>.
+    </p>
+    <ol>
+      <li>Sur <a href="https://www.msys2.org/" target="_blank">msys2.org</a>, téléchargez l'installateur (<code>msys2-x86_64-….exe</code>) et lancez-le.
+        Gardez le dossier proposé, <code>C:\msys64</code>, puis cliquez sur <strong>Next</strong> jusqu'à <strong>Finish</strong>.</li>
+      <li>Une fenêtre noire s'ouvre : c'est le terminal <strong>MSYS2 UCRT64</strong>. Collez-y la commande suivante (clic droit → <strong>Paste</strong>), puis appuyez sur <kbd>Entrée</kbd> :
+        <pre data-titre="Terminal MSYS2 UCRT64"><code class="nohighlight">pacman -S --needed base-devel mingw-w64-ucrt-x86_64-toolchain</code></pre>
+      </li>
+      <li>Le terminal demande quels paquets installer : appuyez sur <kbd>Entrée</kbd> pour tout accepter. Il demande ensuite <code>Proceed with installation? [Y/n]</code> : tapez <code>Y</code> puis <kbd>Entrée</kbd>.
+        Attendez la fin de l'installation, puis fermez le terminal.</li>
+      <li>Ajoutez le compilateur au <strong>PATH</strong>, la liste des dossiers où Windows cherche les programmes :
+        <ul>
+          <li>dans la barre de recherche de Windows, tapez <strong>variables d'environnement</strong> et ouvrez <strong>Modifier les variables d'environnement pour votre compte</strong> ;</li>
+          <li>dans la liste du haut, sélectionnez <strong>Path</strong>, puis cliquez sur <strong>Modifier…</strong> ;</li>
+          <li>cliquez sur <strong>Nouveau</strong>, collez <code>C:\msys64\ucrt64\bin</code> et validez avec <strong>OK</strong> dans les deux fenêtres.</li>
+        </ul>
+      </li>
+      <li>Ouvrez un <strong>nouveau</strong> terminal PowerShell (menu Démarrer → PowerShell) et vérifiez que le compilateur répond :
+        <pre data-titre="PowerShell"><code class="nohighlight"><span class="invite">&gt; </span>g++ --version
+g++.exe (Rev…, Built by MSYS2 project) 15.…</code></pre>
+      </li>
+    </ol>
+    <p class="muet" style="font-size: 14px;">Si PowerShell répond <code>g++ n'est pas reconnu…</code>, le PATH est mal réglé : vérifiez le chemin collé, puis fermez et rouvrez PowerShell (et VS Code).
+      Le numéro de version peut être différent : c'est normal.</p>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="macos">
+    <h2><span class="num">M</span> macOS : installer les outils de développement</h2>
+    <div class="meta"><span class="etiquette clair">macOS</span></div>
+
+    <p>Apple fournit gratuitement un compilateur C++ (<em>Clang</em>) avec ses outils en ligne de commande. Vous n'avez pas besoin d'installer Xcode en entier.</p>
+    <ol>
+      <li>Ouvrez l'application <strong>Terminal</strong> (Spotlight : <kbd>⌘</kbd> + <kbd>Espace</kbd>, puis tapez « Terminal »).</li>
+      <li>Collez la commande suivante puis appuyez sur <kbd>Entrée</kbd> :
+        <pre data-titre="Terminal"><code class="nohighlight">xcode-select --install</code></pre>
+      </li>
+      <li>Une fenêtre s'ouvre : cliquez sur <strong>Installer</strong>, acceptez la licence et attendez la fin du téléchargement.
+        Si le terminal répond <code>command line tools are already installed</code>, les outils sont déjà là : passez à l'étape suivante.</li>
+      <li>Vérifiez que le compilateur répond :
+        <pre data-titre="Terminal"><code class="nohighlight"><span class="invite">$ </span>g++ --version
+Apple clang version 17.…</code></pre>
+      </li>
+    </ol>
+    <p class="muet" style="font-size: 14px;">Sous macOS, la commande <code>g++</code> lance en réalité Clang, le compilateur d'Apple. Les deux comprennent le même C++ : tout le module fonctionne à l'identique.</p>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="linux">
+    <h2><span class="num">L</span> Linux : installer build-essential</h2>
+    <div class="meta"><span class="etiquette clair">Ubuntu, Debian et dérivées</span></div>
+
+    <p>Dans un terminal, installez le paquet qui regroupe <code>g++</code> et ses outils, puis vérifiez la version :</p>
+    <pre data-titre="Terminal"><code class="nohighlight"><span class="invite">$ </span>sudo apt update
+<span class="invite">$ </span>sudo apt install build-essential
+<span class="invite">$ </span>g++ --version</code></pre>
+    <p class="muet" style="font-size: 14px;">Sur Fedora : <code>sudo dnf install gcc-c++</code>.</p>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="vscode">
+    <h2><span class="num">V</span> VS Code : l'extension C/C++</h2>
+    <div class="meta"><span class="etiquette clair">Tous les systèmes</span></div>
+
+    <ol>
+      <li>Si besoin, installez <a href="https://code.visualstudio.com/" target="_blank">VS Code</a>.</li>
+      <li>Ouvrez l'onglet <strong>Extensions</strong> (<kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>X</kbd>, ou <kbd>⌘</kbd> + <kbd>Maj</kbd> + <kbd>X</kbd> sur Mac),
+        cherchez <strong>C/C++</strong> et installez l'extension <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools" target="_blank">C/C++ de Microsoft</a>.</li>
+      <li>Fermez et rouvrez VS Code.</li>
+    </ol>
+    <p class="muet" style="font-size: 14px;">Une fois l'extension installée, <kbd>Maj</kbd> + <kbd>Alt</kbd> + <kbd>F</kbd> (<kbd>Maj</kbd> + <kbd>Option</kbd> + <kbd>F</kbd> sur Mac) remet votre code en forme automatiquement.
+      Inutile d'installer l'extension « Code Runner » : nous compilerons dans le terminal, ce qui marche aussi avec plusieurs fichiers.</p>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="tester">
+    <h2><span class="num">✓</span> Tester : votre premier programme C++</h2>
+    <div class="meta"><span class="etiquette clair">Tous les systèmes</span></div>
+
+    <ol>
+      <li>Créez un dossier <code>cpp-test</code> (sur le bureau, par exemple) et ouvrez-le dans VS Code (<strong>Fichier → Ouvrir le dossier…</strong>).</li>
+      <li>Créez le fichier <code>hello.cpp</code> et copiez-y ce programme :
+        <pre data-titre="hello.cpp"><code class="language-cpp">
+          #include &lt;iostream&gt;
+
+          int main() {
+              std::cout &lt;&lt; "Bonjour depuis le C++ !" &lt;&lt; std::endl;
+              return 0;
+          }
+        </code></pre>
+      </li>
+      <li>Ouvrez le terminal intégré de VS Code (<strong>Terminal → Nouveau terminal</strong>), puis <strong>compilez</strong> et <strong>exécutez</strong> le programme&nbsp;:
+        <pre class="terminal" data-titre="Terminal" data-sortie="hello.cpp"><code class="nohighlight"><span class="invite">$ </span>g++ -std=c++17 hello.cpp -o hello
+<span class="invite">$ </span>./hello
+Bonjour depuis le C++ !</code></pre>
+      </li>
+    </ol>
+    <p>
+      La première commande demande à <code>g++</code> de traduire <code>hello.cpp</code> en un programme nommé <code>hello</code> (<code>hello.exe</code> sous Windows).
+      La seconde lance ce programme. Si le message s'affiche, votre environnement est prêt. 🎉
+    </p>
+    <p class="muet" style="font-size: 14px;"><code>-std=c++17</code> choisit la version du langage, la norme C++ de 2017, bien prise en charge par tous les compilateurs récents.
+      <code>-o hello</code> donne le nom du programme produit (<em>output</em>).</p>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="github">
+    <h2><span class="num">G</span> GitHub : vérifier son compte</h2>
+    <div class="meta"><span class="etiquette clair">Déjà fait en 1GEST</span></div>
+
+    <p>Votre projet sera rendu sur GitHub, comme en 1GEST. Vérifiez que :</p>
+    <ul>
+      <li>vous pouvez vous connecter à votre compte <a href="https://github.com/login" target="_blank">GitHub</a> et que la <strong>double authentification</strong> est activée ;</li>
+      <li><a href="https://desktop.github.com/" target="_blank">GitHub Desktop</a> est installé et connecté à ce compte (<strong>File → Options → Accounts</strong> sous Windows, <strong>GitHub Desktop → Settings → Accounts</strong> sur Mac).</li>
+    </ul>
+    <p class="muet" style="font-size: 14px;">GitHub appartient à Microsoft et relève du droit américain (<em>Cloud Act</em>). Je l'utilise parce que je le maîtrise.
+      Des alternatives ouvertes existent, comme <a href="https://about.gitlab.com/" target="_blank">GitLab</a> ou <a href="https://codeberg.org/" target="_blank">Codeberg</a>.</p>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="valider">
+    <h2><span class="num">✓</span> Avant le premier cours</h2>
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li><code>g++ --version</code> affiche une version dans le terminal de VS Code ;</li>
+        <li><code>hello.cpp</code> se compile sans erreur et affiche <code>Bonjour depuis le C++ !</code> ;</li>
+        <li>l'extension C/C++ est installée dans VS Code ;</li>
+        <li>GitHub Desktop est connecté à votre compte GitHub.</li>
+      </ul>
+    </div>
+    <p class="muet" style="font-size: 14px;">En dernier recours, si l'installation est impossible sur votre ordinateur le jour du cours, un compilateur en ligne comme
+      <a href="https://www.onlinegdb.com/online_c++_compiler" target="_blank">OnlineGDB</a> permet de commencer en attendant.
+      Votre code est alors envoyé sur un service tiers : n'y mettez aucune information personnelle.</p>
+  </section>
+
+</main>
+
+<footer class="pied">Chris CHEVALIER · 1IPOO – Initiation à la programmation orientée objet · École Hexagone</footer>
+
+<script src="../assets/vendor/reveal/plugin/highlight/highlight.js"></script>
+<script src="../assets/js/enonce.js"></script>
+</body>
+</html>

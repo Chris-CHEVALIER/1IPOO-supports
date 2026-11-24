@@ -1,0 +1,1438 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Classes et objets – 1IPOO</title>
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reset.css">
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reveal.css">
+  <link rel="stylesheet" href="../assets/css/hexagone.css">
+</head>
+<body data-pied="1IPOO – Initiation à la programmation orientée objet · Classes et objets">
+<div class="reveal">
+<div class="slides">
+
+  <!-- ================================================================== -->
+  <section data-layout="titre">
+    <h1>Classes et objets</h1>
+    <div class="sous-titre">
+      <span class="code-module">1IPOO</span> – Initiation à la programmation orientée objet<br>
+      Chris CHEVALIER
+    </div>
+  </section>
+
+  <section data-layout="sommaire">
+    <h1>Sommaire</h1>
+    <ol>
+      <li>Du Python au C++</li>
+      <li>Classes et objets</li>
+      <li>L'encapsulation</li>
+      <li>Constructeurs et destructeur</li>
+      <li>Séparer une classe en deux fichiers</li>
+      <li>Des objets qui collaborent</li>
+    </ol>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- #1 DU PYTHON AU C++                                                -->
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">#1</div>
+    <h2>Du Python au C++</h2>
+    <div class="sous-titre">Classes et objets</div>
+  </section>
+
+  <section>
+    <h2>Compiler plutôt qu'interpréter</h2>
+    <div class="corps">
+      <div class="frise">
+        <div class="etape">
+          <div class="date">1. Écrire</div>
+          Vous écrivez le code source dans un fichier <code>.cpp</code>
+        </div>
+        <div class="etape">
+          <div class="date">2. Compiler</div>
+          Le compilateur <code>g++</code> vérifie le code et le <strong>traduit</strong> en langage machine
+        </div>
+        <div class="etape">
+          <div class="date">3. Obtenir</div>
+          Un programme <strong>exécutable</strong> : <code>hello</code> (<code>hello.exe</code> sous Windows)
+        </div>
+        <div class="etape marine">
+          <div class="date">4. Exécuter</div>
+          Vous lancez ce programme autant de fois que vous voulez, sans recompiler
+        </div>
+      </div>
+      <div class="colonnes" style="margin-top: 30px;">
+        <div class="carte">
+          <h3>Python : interprété</h3>
+          L'interpréteur lit et exécute votre fichier <strong>ligne après ligne</strong>. Une faute de frappe n'est découverte qu'au moment où la ligne s'exécute.
+        </div>
+        <div class="carte">
+          <h3>C++ : compilé</h3>
+          Le compilateur lit <strong>tout le fichier avant</strong> de produire le programme. La plupart des erreurs sont détectées avant même le lancement.
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      Insister : à chaque modification du code, il faut recompiler. Erreur classique : modifier le .cpp et relancer l'ancien exécutable.
+    </aside>
+  </section>
+
+  <section class="haut">
+    <h2>Un premier programme</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <div>
+          <pre data-titre="hello.cpp"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+
+int main() {
+    std::cout &lt;&lt; "Bonjour, Manon !" &lt;&lt; std::endl;
+    std::cout &lt;&lt; 6 * 7 &lt;&lt; std::endl;
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal" data-titre="Terminal" data-sortie="hello.cpp"><code class="nohighlight" data-noescape><span class="invite">$ </span>g++ -std=c++17 -Wall hello.cpp -o hello
+<span class="invite">$ </span>./hello
+Bonjour, Manon !
+42</code></pre>
+        </div>
+        <ul class="dense">
+          <li><code>#include &lt;iostream&gt;</code> importe les outils d'affichage, comme <code>import</code> en Python</li>
+          <li><code>main()</code> est la <strong>fonction principale</strong> : le programme commence toujours par elle</li>
+          <li><code>std::cout &lt;&lt;</code> affiche ce qui suit et <code>std::endl</code> passe à la ligne. <code>std::</code> indique qu'ils viennent de la <a href="https://cppreference.com/w/cpp/standard_library.html" target="_blank">bibliothèque standard</a></li>
+          <li>Les <strong>accolades</strong> délimitent les blocs et chaque instruction finit par un <strong>point-virgule</strong></li>
+          <li><code>-Wall</code> affiche tous les avertissements (<em>warnings</em>) du compilateur : gardez-le toujours</li>
+        </ul>
+      </div>
+    </div>
+    <aside class="notes">
+      Faire taper ce programme par tout le monde, compiler, exécuter. Puis retirer un point-virgule pour voir l'erreur.
+    </aside>
+  </section>
+
+  <section>
+    <h2>Lire une erreur de compilation</h2>
+    <div class="corps">
+      <div class="colonnes texte-code">
+        <div>
+          <p>Si le code contient une erreur, <strong>aucun programme n'est produit</strong>. Le compilateur indique :</p>
+          <ul class="dense">
+            <li>le <strong>fichier</strong>, la <strong>ligne</strong> et la <strong>colonne</strong> (<code>hello.cpp:4:40</code>) ;</li>
+            <li>le <strong>problème</strong> (<code>expected ';'</code> : un point-virgule était attendu).</li>
+          </ul>
+          <div class="encadre marine">Une erreur peut en provoquer dix autres. Corrigez <strong>la première</strong>, recompilez, recommencez.</div>
+        </div>
+        <div>
+          <pre data-titre="hello.cpp – un oubli" data-erreur="compilation"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+
+int main() {
+    std::cout &lt;&lt; "Bonjour" &lt;&lt; std::endl
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal"><code class="nohighlight" data-noescape>hello.cpp: In function 'int main()':
+hello.cpp:4:40: error: expected ';'
+before 'return'</code></pre>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      Message de GCC (Windows, Linux). Clang sur Mac écrit : expected ';' after expression. Même sens.
+    </aside>
+  </section>
+
+  <section class="haut">
+    <h2>Des variables typées</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre data-titre="variables.cpp"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+int main() {
+    string name = "Cosmo";
+    int age = 19;
+    double average = 13.5;
+    bool hasLaptop = true;
+    char group = 'B';
+
+    cout &lt;&lt; name &lt;&lt; " a " &lt;&lt; age &lt;&lt; " ans" &lt;&lt; endl;
+    cout &lt;&lt; average &lt;&lt; " " &lt;&lt; group &lt;&lt; endl;
+    cout &lt;&lt; hasLaptop &lt;&lt; endl;
+    return 0;
+}
+        </code></pre>
+        <div>
+          <table class="dense">
+            <tr><th>C++</th><th>Python</th></tr>
+            <tr><td><code>int</code></td><td><code>int</code></td></tr>
+            <tr><td><code>double</code></td><td><code>float</code></td></tr>
+            <tr><td><code>bool</code></td><td><code>bool</code></td></tr>
+            <tr><td><code>string</code></td><td><code>str</code></td></tr>
+            <tr><td><code>char</code></td><td>un caractère</td></tr>
+          </table>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="variables.cpp"><code class="nohighlight" data-noescape>Cosmo a 19 ans
+13.5 B
+1</code></pre>
+          <ul class="legende-code">
+            <li>Le type s'écrit à la création et <strong>ne change plus</strong>. Un <code>bool</code> s'affiche <code>1</code> ou <code>0</code></li>
+            <li><code>using namespace std;</code> évite d'écrire <code>std::</code> partout. Pratique dans un <code>.cpp</code>, à éviter dans un <code>.hpp</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Lire une saisie avec <code>cin</code></h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre data-titre="age.cpp" data-saisie="Manon\n19"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+int main() {
+    string firstName;
+    int age;
+    cout &lt;&lt; "Votre prénom : ";
+    cin &gt;&gt; firstName;
+    cout &lt;&lt; "Votre âge : ";
+    cin &gt;&gt; age;
+
+    cout &lt;&lt; firstName &lt;&lt; " aura " &lt;&lt; age + 1;
+    cout &lt;&lt; " ans l'an prochain." &lt;&lt; endl;
+    return 0;
+}
+        </code></pre>
+        <div>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="age.cpp"><code class="nohighlight" data-noescape>Votre prénom : <span class="saisie">Manon</span>
+Votre âge : <span class="saisie">19</span>
+Manon aura 20 ans
+l'an prochain.</code></pre>
+          <ul class="dense">
+            <li><code>cin &gt;&gt;</code> lit une valeur tapée au clavier et la range dans la variable</li>
+            <li>Pas de conversion comme <code>int(input())</code> : <code>cin</code> lit un <code>int</code> parce que la variable est un <code>int</code></li>
+            <li><code>cin &gt;&gt;</code> s'arrête au premier espace</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      Le terminal coupe la dernière ligne pour tenir dans la diapo. Pour lire une ligne entière avec des espaces : getline(cin, texte).
+    </aside>
+  </section>
+
+  <section class="haut">
+    <h2>Les conditions</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre data-titre="grades.cpp"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int grade = 14;
+    if (grade &gt;= 16) {
+        cout &lt;&lt; "Très bien" &lt;&lt; endl;
+    } else if (grade &gt;= 10 &amp;&amp; grade &lt; 16) {
+        cout &lt;&lt; "Admis" &lt;&lt; endl;
+    } else {
+        cout &lt;&lt; "Ajourné" &lt;&lt; endl;
+    }
+    return 0;
+}
+        </code></pre>
+        <div>
+          <ul class="dense">
+            <li>La condition s'écrit <strong>entre parenthèses</strong>, le bloc entre <strong>accolades</strong></li>
+            <li><code>elif</code> devient <code>else if</code></li>
+            <li><code>and</code>, <code>or</code> et <code>not</code> deviennent <code>&amp;&amp;</code>, <code>||</code> et <code>!</code></li>
+            <li>Les comparaisons ne changent pas : <code>==</code>, <code>!=</code>, <code>&lt;</code>, <code>&gt;=</code>…</li>
+          </ul>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="grades.cpp"><code class="nohighlight" data-noescape>Admis</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Les boucles</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre data-titre="loops.cpp"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    for (int week = 1; week &lt;= 3; week++) {
+        cout &lt;&lt; "Semaine " &lt;&lt; week &lt;&lt; endl;
+    }
+
+    int credits = 0;
+    while (credits &lt; 6) {
+        credits = credits + 2;
+    }
+    cout &lt;&lt; credits &lt;&lt; " crédits" &lt;&lt; endl;
+    return 0;
+}
+        </code></pre>
+        <div>
+          <ul class="dense">
+            <li><code>for</code> a trois parties : le départ, la condition pour continuer, le pas. Ici, comme <code>for week in range(1, 4)</code></li>
+            <li><code>week++</code> ajoute 1 à <code>week</code></li>
+            <li><code>while</code> fonctionne comme en Python</li>
+          </ul>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="loops.cpp"><code class="nohighlight" data-noescape>Semaine 1
+Semaine 2
+Semaine 3
+6 crédits</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Des fonctions typées</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre data-titre="average.cpp"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+double average(double a, double b) {
+    return (a + b) / 2;
+}
+
+void greet(string name) {
+    cout &lt;&lt; "Bienvenue, " &lt;&lt; name &lt;&lt; " !" &lt;&lt; endl;
+}
+
+int main() {
+    greet("Chris");
+    cout &lt;&lt; average(12, 15) &lt;&lt; endl;
+    return 0;
+}
+        </code></pre>
+        <div>
+          <ul class="dense">
+            <li>Le type de retour s'écrit <strong>devant</strong> le nom de la fonction, le type de chaque paramètre devant le paramètre</li>
+            <li><code>void</code> : la fonction ne renvoie rien</li>
+            <li>Une fonction doit être écrite <strong>avant</strong> d'être appelée, ici au-dessus de <code>main</code></li>
+          </ul>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="average.cpp"><code class="nohighlight" data-noescape>Bienvenue, Chris !
+13.5</code></pre>
+          <div class="encadre marine petit">Entre deux entiers, <code>/</code> fait une <strong>division entière</strong> : <code>7 / 2</code> vaut <code>3</code> (<code>7 // 2</code> en Python).</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Qu'affiche ce programme ?</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <pre data-titre="quiz_1.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+using namespace std;
+
+int bonus(int grade) {
+    if (grade &gt; 18) {
+        return 0;
+    }
+    return 2;
+}
+        </code></pre>
+        <div>
+          <pre data-titre="quiz_1.cpp (2/2)"><code class="language-cpp" data-trim>
+int main() {
+    int total = 0;
+    for (int i = 0; i &lt; 4; i++) {
+        total = total + i;
+    }
+    cout &lt;&lt; total &lt;&lt; endl;
+    cout &lt;&lt; 9 / 4 &lt;&lt; endl;
+    cout &lt;&lt; 17 + bonus(17) &lt;&lt; endl;
+    return 0;
+}
+          </code></pre>
+          <div class="reponse fragment"><code>6</code> : <code>i</code> vaut 0, 1, 2 puis 3, donc 0 + 1 + 2 + 3</div>
+          <div class="reponse fragment"><code>2</code> : division entière entre deux <code>int</code></div>
+          <div class="reponse fragment"><code>19</code> : 17 n'est pas supérieur à 18, <code>bonus</code> renvoie 2</div>
+        </div>
+      </div>
+      <pre class="terminal" data-sortie="quiz_1.cpp" style="display: none;"><code class="nohighlight" data-noescape>6
+2
+19</code></pre>
+    </div>
+    <aside class="notes">
+      Laisser 30 secondes, faire répondre à l'oral (ou dans le chat pour Versailles), puis révéler ligne par ligne.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- #2 CLASSES ET OBJETS                                               -->
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">#2</div>
+    <h2>Classes et objets</h2>
+    <div class="sous-titre">Classes et objets</div>
+  </section>
+
+  <section>
+    <h2>Un objet, vous en avez déjà utilisé</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <div>
+          <pre data-titre="string_object.cpp"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+int main() {
+    string course = "Programmation objet";
+    cout &lt;&lt; course.size() &lt;&lt; endl;
+    cout &lt;&lt; course.substr(0, 5) &lt;&lt; endl;
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="string_object.cpp"><code class="nohighlight" data-noescape>19
+Progr</code></pre>
+        </div>
+        <ul class="dense">
+          <li><code>course</code> est un <strong>objet</strong> de type <code>string</code></li>
+          <li>Il contient des <strong>données</strong> : les caractères du texte</li>
+          <li>Il sait faire des <strong>actions</strong> : <code>size()</code> donne sa longueur, <code>substr()</code> extrait un morceau</li>
+          <li>On appelle une action avec un <strong>point</strong>, comme <code>"texte".upper()</code> en Python</li>
+          <li>Vous l'utilisez sans savoir comment il marche à l'intérieur : l'objet <strong>cache sa complexité</strong></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Classe et objet</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <ul class="dense">
+            <li>Une <strong>classe</strong> est un <strong>modèle</strong> : elle décrit ce que contient un objet et ce qu'il sait faire</li>
+            <li>Un <strong>objet</strong> est un exemplaire concret créé à partir de ce modèle. C'est une <strong>instance</strong> de la classe</li>
+            <li>Une classe a des <strong>attributs</strong> (ses données) et des <strong>méthodes</strong> (ses actions : des fonctions de la classe)</li>
+            <li>Par convention, une classe commence par une <strong>majuscule</strong> (<code>LibraryCard</code>), un objet par une minuscule (<code>manonCard</code>)</li>
+          </ul>
+        </div>
+        <div class="carte pleine">
+          <h3>La classe <code>LibraryCard</code> (carte de bibliothèque)</h3>
+          <p><strong>Attributs</strong> : le nom du titulaire, le nombre de livres empruntés</p>
+          <p><strong>Méthodes</strong> : emprunter un livre, rendre un livre, afficher la carte</p>
+          <p><strong>Objets</strong> : la carte de Manon, celle de Cosmo… Chacune a ses propres valeurs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Déclarer une classe</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <div>
+          <pre data-titre="card_v1.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+class LibraryCard {
+public:
+    string owner;
+    int borrowedBooks;
+};
+          </code></pre>
+          <ul class="legende-code">
+            <li><code>class LibraryCard { … };</code> déclare la classe. N'oubliez pas le <strong>point-virgule</strong> final</li>
+            <li><code>public:</code> rend les attributs accessibles depuis <code>main</code> (nous y reviendrons)</li>
+            <li><code>LibraryCard manonCard;</code> crée un objet, comme on crée une variable</li>
+            <li><code>objet.attribut</code> lit ou modifie un attribut de cet objet</li>
+          </ul>
+        </div>
+        <div>
+          <pre data-titre="card_v1.cpp (2/2)"><code class="language-cpp" data-trim>
+int main() {
+    LibraryCard manonCard;
+    manonCard.owner = "Manon";
+    manonCard.borrowedBooks = 2;
+
+    LibraryCard cosmoCard;
+    cosmoCard.owner = "Cosmo";
+    cosmoCard.borrowedBooks = 0;
+
+    cout &lt;&lt; manonCard.owner &lt;&lt; " : "
+         &lt;&lt; manonCard.borrowedBooks &lt;&lt; endl;
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="card_v1.cpp"><code class="nohighlight" data-noescape>Manon : 2</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Ajouter des méthodes</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <pre data-titre="card_v2.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+class LibraryCard {
+public:
+    string owner;
+    int borrowedBooks;
+
+    void borrowBook() {
+        borrowedBooks = borrowedBooks + 1;
+    }
+
+    void display() {
+        cout &lt;&lt; owner &lt;&lt; " : " &lt;&lt; borrowedBooks;
+        cout &lt;&lt; " livre(s)" &lt;&lt; endl;
+    }
+};
+        </code></pre>
+        <div>
+          <pre data-titre="card_v2.cpp (2/2)"><code class="language-cpp" data-trim>
+int main() {
+    LibraryCard card;
+    card.owner = "Manon";
+    card.borrowedBooks = 0;
+    card.borrowBook();
+    card.borrowBook();
+    card.display();
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="card_v2.cpp"><code class="nohighlight" data-noescape>Manon : 2 livre(s)</code></pre>
+          <ul class="legende-code">
+            <li>Une <strong>méthode</strong> est une fonction écrite <strong>dans</strong> la classe. Elle accède directement aux attributs de l'objet</li>
+            <li>Pas de <code>self</code> comme en Python : en C++, il est implicite</li>
+            <li><code>card.borrowBook()</code> se lit : « sur l'objet <code>card</code>, j'appelle <code>borrowBook</code> »</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      Le pointeur this existe (équivalent de self) : inutile aujourd'hui.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- #3 ENCAPSULATION                                                   -->
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">#3</div>
+    <h2>L'encapsulation</h2>
+    <div class="sous-titre">Classes et objets</div>
+  </section>
+
+  <section>
+    <h2>Le problème des attributs publics</h2>
+    <div class="corps">
+      <div class="colonnes texte-code">
+        <div>
+          <p>La bibliothèque limite les emprunts à <strong>5 livres</strong> par carte. Mais rien n'empêche d'écrire n'importe quoi :</p>
+          <pre data-titre="Dans main"><code class="language-plaintext">card.borrowedBooks = 42;
+card.borrowedBooks = -3;</code></pre>
+          <p>Le programme accepte ces valeurs absurdes. Chaque développeur qui utilise la classe doit penser à vérifier… et il finira par oublier.</p>
+        </div>
+        <div class="encadre marine">
+          <span class="intitule">Le principe d'encapsulation</span>
+          <p>Les <strong>attributs</strong> d'une classe sont <strong>cachés</strong> : on ne peut pas les modifier depuis l'extérieur.</p>
+          <p>On passe par des <strong>méthodes publiques</strong>, qui vérifient la cohérence des valeurs avant de modifier les attributs.</p>
+          <p>L'objet <strong>protège lui-même</strong> ses données.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2><code>public</code> et <code>private</code></h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <div>
+          <pre data-titre="card_private.cpp" data-erreur="compilation"><code class="language-cpp" data-trim>
+class LibraryCard {
+private:
+    int borrowedBooks = 0;
+
+public:
+    void borrowBook() {
+        borrowedBooks++;
+    }
+};
+
+int main() {
+    LibraryCard card;
+    card.borrowedBooks = 42;
+    return 0;
+}
+          </code></pre>
+        </div>
+        <div>
+          <pre class="terminal mini" data-titre="Terminal"><code class="nohighlight" data-noescape>card_private.cpp:13:10: error:
+'int LibraryCard::borrowedBooks'
+is private within this context</code></pre>
+          <table class="dense">
+            <tr><th>Droit d'accès</th><th>Accessible depuis</th></tr>
+            <tr><td><code>public</code></td><td>partout</td></tr>
+            <tr><td><code>private</code></td><td>les méthodes de la classe seulement</td></tr>
+          </table>
+          <ul class="dense">
+            <li>La règle : <strong>attributs privés</strong>, <strong>méthodes publiques</strong></li>
+            <li>Dans une classe, tout est <code>private</code> par défaut</li>
+            <li>L'erreur est détectée <strong>à la compilation</strong> : aucun programme n'est produit</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      Message de GCC. Clang sur Mac écrit "is a private member of". Même sens.
+      Une méthode qui ne sert qu'à l'intérieur de la classe peut aussi être privée.
+    </aside>
+  </section>
+
+  <section class="haut">
+    <h2>Des méthodes qui protègent les données</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <pre data-titre="card_v3.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+using namespace std;
+
+class LibraryCard {
+private:
+    int borrowedBooks = 0;
+
+public:
+    bool borrowBook() {
+        if (borrowedBooks &gt;= 5) {
+            cout &lt;&lt; "Limite atteinte." &lt;&lt; endl;
+            return false;
+        }
+        borrowedBooks++;
+        return true;
+    }
+
+    int getBorrowedBooks() const {
+        return borrowedBooks;
+    }
+};
+        </code></pre>
+        <div>
+          <pre data-titre="card_v3.cpp (2/2)"><code class="language-cpp" data-trim>
+int main() {
+    LibraryCard card;
+    for (int i = 0; i &lt; 6; i++) {
+        card.borrowBook();
+    }
+    cout &lt;&lt; card.getBorrowedBooks() &lt;&lt; endl;
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="card_v3.cpp"><code class="nohighlight" data-noescape>Limite atteinte.
+5</code></pre>
+          <ul class="legende-code">
+            <li><code>borrowBook()</code> <strong>refuse</strong> le 6<sup>e</sup> emprunt et renvoie <code>false</code></li>
+            <li><code>getBorrowedBooks()</code> donne la valeur <strong>en lecture seule</strong> : on peut la lire, pas la modifier</li>
+            <li><code>= 0</code> après un attribut donne sa valeur de départ. Les constructeurs feront mieux</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Accesseurs, mutateurs et méthodes <code>const</code></h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre data-titre="Extrait d'une classe Student"><code class="language-plaintext">private:
+    int age;
+
+public:
+    int getAge() const {        // accesseur
+        return age;
+    }
+
+    void setAge(int newAge) {   // mutateur
+        if (newAge >= 15 &amp;&amp; newAge &lt;= 99) {
+            age = newAge;
+        }
+    }</code></pre>
+        <ul class="dense">
+          <li>Un <strong>accesseur</strong> (<em>getter</em>) renvoie la valeur d'un attribut privé. Son nom commence par <code>get</code></li>
+          <li>Un <strong>mutateur</strong> (<em>setter</em>) modifie un attribut <strong>après vérification</strong>. Son nom commence par <code>set</code></li>
+          <li><code>const</code> en fin de méthode promet qu'elle <strong>ne modifie pas</strong> l'objet. Le compilateur y refuse toute modification d'attribut</li>
+          <li>Pas de mutateur par réflexe : seulement s'il a du sens. On ne change pas le titulaire d'une carte</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Qu'affiche ce programme ?</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <pre data-titre="quiz_2.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+using namespace std;
+
+class Course {
+private:
+    int grade = 10;
+
+public:
+    void setGrade(int newGrade) {
+        if (newGrade &gt;= 0 &amp;&amp; newGrade &lt;= 20) {
+            grade = newGrade;
+        }
+    }
+
+    int getGrade() const {
+        return grade;
+    }
+};
+        </code></pre>
+        <div>
+          <pre data-titre="quiz_2.cpp (2/2)"><code class="language-cpp" data-trim>
+int main() {
+    Course math;
+    math.setGrade(25);
+    cout &lt;&lt; math.getGrade() &lt;&lt; endl;
+    math.setGrade(16);
+    cout &lt;&lt; math.getGrade() &lt;&lt; endl;
+    return 0;
+}
+          </code></pre>
+          <div class="reponse fragment"><code>10</code> : 25 est hors de [0, 20], le mutateur l'ignore et la note de départ reste</div>
+          <div class="reponse fragment"><code>16</code> : la valeur est valide, elle remplace l'ancienne</div>
+          <div class="reponse fragment">Et <code>math.grade = 16;</code> dans <code>main</code> ? <strong>Erreur de compilation</strong> : <code>grade</code> est privé</div>
+        </div>
+      </div>
+      <pre class="terminal" data-sortie="quiz_2.cpp" style="display: none;"><code class="nohighlight" data-noescape>10
+16</code></pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>À vous : la classe <code>Timetable</code></h2>
+    <div class="corps">
+      <p>Dans un fichier <code>timetable.cpp</code>, écrivez une classe <code>Timetable</code> (emploi du temps de la semaine) :</p>
+      <ul class="dense">
+        <li>un attribut privé <code>hours</code> (nombre d'heures de cours, 0 au départ) ;</li>
+        <li>une méthode <code>addCourse(int duration)</code> qui ajoute la durée seulement si elle est comprise entre 1 et 4 heures <strong>et</strong> si le total ne dépasse pas 35 heures. Elle renvoie <code>true</code> si le cours est ajouté, <code>false</code> sinon ;</li>
+        <li>un accesseur <code>getHours()</code> constant.</li>
+      </ul>
+      <p class="dense">Dans <code>main</code>, ajoutez un cours de 3 h, un de 6 h (refusé) et un de 4 h, puis affichez le total : <code>7</code>.</p>
+      <div class="encadre marine">Compilez avec <code>g++ -std=c++17 -Wall timetable.cpp -o timetable</code>, puis lancez <code>./timetable</code>.</div>
+    </div>
+    <aside class="notes">
+      Correction : if (duration &lt; 1 || duration &gt; 4 || hours + duration &gt; 35) return false; hours += duration; return true;
+      Pour Versailles : un volontaire partage son écran pour montrer sa solution.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- #4 CONSTRUCTEURS ET DESTRUCTEUR                                    -->
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">#4</div>
+    <h2>Constructeurs et destructeur</h2>
+    <div class="sous-titre">Classes et objets</div>
+  </section>
+
+  <section>
+    <h2>Le constructeur</h2>
+    <div class="corps">
+      <div class="colonnes texte-code">
+        <ul class="dense">
+          <li>Le <strong>constructeur</strong> est appelé <strong>automatiquement</strong> à la création de chaque objet, comme <code>__init__</code> en Python</li>
+          <li>Il porte <strong>le nom de la classe</strong> et n'a <strong>aucun type de retour</strong>, pas même <code>void</code></li>
+          <li>Après les deux-points, la <strong>liste d'initialisation</strong> donne leur valeur de départ aux attributs</li>
+          <li>Sans constructeur, un attribut <code>int</code> contient une valeur <strong>imprévisible</strong> : une source de bugs classique en C++</li>
+        </ul>
+        <div>
+          <pre data-titre="Le constructeur de LibraryCard"><code class="language-plaintext">LibraryCard(string newOwner)
+    : owner(newOwner), borrowedBooks(0) {
+}</code></pre>
+          <pre data-titre="Création d'objets dans main"><code class="language-plaintext">LibraryCard manonCard("Manon");
+LibraryCard cosmoCard("Cosmo");</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Le constructeur en action</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <pre data-titre="card_v4.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+class LibraryCard {
+private:
+    string owner;
+    int borrowedBooks;
+
+public:
+    LibraryCard(string newOwner)
+        : owner(newOwner), borrowedBooks(0) {
+        cout &lt;&lt; "Carte de " &lt;&lt; owner &lt;&lt; endl;
+    }
+
+    void display() const {
+        cout &lt;&lt; owner &lt;&lt; " : " &lt;&lt; borrowedBooks;
+        cout &lt;&lt; " livre(s)" &lt;&lt; endl;
+    }
+};
+        </code></pre>
+        <div>
+          <pre data-titre="card_v4.cpp (2/2)"><code class="language-cpp" data-trim>
+int main() {
+    LibraryCard manonCard("Manon");
+    LibraryCard cosmoCard("Cosmo");
+    manonCard.display();
+    cosmoCard.display();
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="card_v4.cpp"><code class="nohighlight" data-noescape>Carte de Manon
+Carte de Cosmo
+Manon : 0 livre(s)
+Cosmo : 0 livre(s)</code></pre>
+          <ul class="legende-code">
+            <li>Le message du constructeur s'affiche <strong>à la création</strong> de chaque carte</li>
+            <li>Chaque carte commence avec 0 livre : impossible d'oublier de l'initialiser</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Plusieurs constructeurs</h2>
+    <div class="corps">
+      <div class="colonnes texte-code">
+        <ul class="dense">
+          <li>Une classe peut avoir <strong>plusieurs constructeurs</strong> avec des paramètres différents. C'est la <strong>surcharge</strong></li>
+          <li>Le compilateur choisit le bon selon les arguments donnés à la création</li>
+          <li>Le constructeur <strong>sans paramètre</strong> est le <strong>constructeur par défaut</strong>. On crée l'objet sans parenthèses : <code>LibraryCard guest;</code></li>
+          <li>Le constructeur <strong>vérifie</strong> les valeurs : l'objet est cohérent dès sa naissance</li>
+        </ul>
+        <pre data-titre="Deux constructeurs"><code class="language-plaintext">LibraryCard()
+    : owner("Visiteur"), borrowedBooks(0) {
+}
+
+LibraryCard(string newOwner, int books)
+    : owner(newOwner), borrowedBooks(0) {
+    if (books &gt;= 0 &amp;&amp; books &lt;= 5) {
+        borrowedBooks = books;
+    }
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Plusieurs constructeurs en action</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <pre data-titre="card_v5.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+class LibraryCard {
+private:
+    string owner;
+    int borrowedBooks;
+
+public:
+    LibraryCard()
+        : owner("Visiteur"), borrowedBooks(0) {
+    }
+
+    LibraryCard(string newOwner, int books)
+        : owner(newOwner), borrowedBooks(0) {
+        if (books &gt;= 0 &amp;&amp; books &lt;= 5) {
+            borrowedBooks = books;
+        }
+    }
+        </code></pre>
+        <div>
+          <pre data-titre="card_v5.cpp (2/2)"><code class="language-cpp" data-trim>
+    void display() const {
+        cout &lt;&lt; owner &lt;&lt; " : " &lt;&lt; borrowedBooks;
+        cout &lt;&lt; " livre(s)" &lt;&lt; endl;
+    }
+};
+
+int main() {
+    LibraryCard guest;
+    LibraryCard chrisCard("Chris", 3);
+    LibraryCard wrongCard("Cosmo", 12);
+    guest.display();
+    chrisCard.display();
+    wrongCard.display();
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="card_v5.cpp"><code class="nohighlight" data-noescape>Visiteur : 0 livre(s)
+Chris : 3 livre(s)
+Cosmo : 0 livre(s)</code></pre>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      Faire remarquer que Cosmo est créé avec 12 livres, valeur refusée par le constructeur.
+    </aside>
+  </section>
+
+  <section class="haut">
+    <h2>Le destructeur</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <div>
+          <pre data-titre="destructor.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+class LibraryCard {
+private:
+    string owner;
+
+public:
+    LibraryCard(string newOwner)
+        : owner(newOwner) {
+        cout &lt;&lt; "+ carte de " &lt;&lt; owner &lt;&lt; endl;
+    }
+
+    ~LibraryCard() {
+        cout &lt;&lt; "- carte de " &lt;&lt; owner &lt;&lt; endl;
+    }
+};
+          </code></pre>
+          <ul class="legende-code">
+            <li><code>~</code> suivi du nom de la classe, sans paramètre ni type de retour : un seul destructeur par classe</li>
+          </ul>
+        </div>
+        <div>
+          <pre data-titre="destructor.cpp (2/2)"><code class="language-cpp" data-trim>
+int main() {
+    LibraryCard manonCard("Manon");
+    {
+        LibraryCard cosmoCard("Cosmo");
+        cout &lt;&lt; "Fin du bloc" &lt;&lt; endl;
+    }
+    cout &lt;&lt; "Fin du main" &lt;&lt; endl;
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="destructor.cpp"><code class="nohighlight" data-noescape>+ carte de Manon
++ carte de Cosmo
+Fin du bloc
+- carte de Cosmo
+Fin du main
+- carte de Manon</code></pre>
+          <ul class="legende-code">
+            <li>Appelé <strong>automatiquement</strong> à la fin du bloc où l'objet a été créé, il sert à <strong>libérer</strong> ce que l'objet a réservé (mémoire, fichier…)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Qu'affiche ce programme ?</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <div>
+          <pre data-titre="quiz_3.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+class Badge {
+private:
+    string name;
+
+public:
+    Badge(string newName) : name(newName) {
+        cout &lt;&lt; "Bonjour " &lt;&lt; name &lt;&lt; endl;
+    }
+
+    ~Badge() {
+        cout &lt;&lt; "Au revoir " &lt;&lt; name &lt;&lt; endl;
+    }
+};
+          </code></pre>
+          
+        </div>
+        <div>
+          <pre data-titre="quiz_3.cpp (2/2)"><code class="language-cpp" data-trim>
+int main() {
+    Badge first("Chris");
+    for (int i = 0; i &lt; 2; i++) {
+        Badge visitor("Cosmo");
+    }
+    Badge last("Manon");
+    return 0;
+}
+          </code></pre>
+          <div class="reponse fragment"><code>Bonjour Chris</code></div>
+          <div class="reponse fragment"><code>Bonjour Cosmo</code> puis <code>Au revoir Cosmo</code>, <strong>deux fois</strong> : <code>visitor</code> est créé puis détruit à chaque tour de boucle</div>
+          <div class="reponse fragment"><code>Bonjour Manon</code></div>
+          <div class="reponse fragment"><code>Au revoir Manon</code> puis <code>Au revoir Chris</code> : à la fin de <code>main</code>, les objets sont détruits dans l'<strong>ordre inverse</strong> de leur création</div>
+        </div>
+      </div>
+      <pre class="terminal" data-sortie="quiz_3.cpp" style="display: none;"><code class="nohighlight" data-noescape>Bonjour Chris
+Bonjour Cosmo
+Au revoir Cosmo
+Bonjour Cosmo
+Au revoir Cosmo
+Bonjour Manon
+Au revoir Manon
+Au revoir Chris</code></pre>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- #5 SÉPARER EN FICHIERS                                             -->
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">#5</div>
+    <h2>Séparer une classe en deux fichiers</h2>
+    <div class="sous-titre">Classes et objets</div>
+  </section>
+
+  <section>
+    <h2>Un fichier pour déclarer, un pour définir</h2>
+    <div class="corps">
+      <p>Dès qu'un programme grandit, chaque classe est répartie dans <strong>deux fichiers</strong> :</p>
+      <table class="dense">
+        <tr><th>Fichier</th><th>Contenu</th><th>Rôle</th></tr>
+        <tr><td><code>LibraryCard.hpp</code></td><td>la <strong>déclaration</strong> : attributs et prototypes des méthodes</td><td>le « sommaire » de la classe, ce que les autres fichiers doivent connaître</td></tr>
+        <tr><td><code>LibraryCard.cpp</code></td><td>la <strong>définition</strong> : le code de chaque méthode</td><td>le « comment ça marche »</td></tr>
+        <tr><td><code>main.cpp</code></td><td>la fonction <code>main</code></td><td>le programme qui utilise la classe</td></tr>
+      </table>
+      <div class="encadre" style="margin-top: 18px;">
+        Un <strong>prototype</strong> est la première ligne d'une fonction, sans son code : <code>bool borrowBook();</code>.
+        <code>.hpp</code> vient de <em>header</em> (fichier d'en-tête).
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Le fichier d'en-tête <code>.hpp</code></h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre data-titre="LibraryCard.hpp"><code class="language-cpp" data-trim>
+#pragma once
+#include &lt;string&gt;
+
+class LibraryCard {
+private:
+    std::string owner;
+    int borrowedBooks;
+
+public:
+    LibraryCard(std::string newOwner);
+    bool borrowBook();
+    bool returnBook();
+    int getBorrowedBooks() const;
+    void display() const;
+};
+        </code></pre>
+        <ul class="dense">
+          <li>On ne garde que les <strong>attributs</strong> et les <strong>prototypes</strong>, terminés par un point-virgule</li>
+          <li><code>#pragma once</code> empêche que le fichier soit inclus deux fois dans un même programme, ce qui provoquerait l'erreur « classe déjà définie »</li>
+          <li>Pas de <code>using namespace std;</code> dans un <code>.hpp</code> : on écrit <code>std::string</code></li>
+          <li>On lit ce fichier pour savoir <strong>ce que la classe sait faire</strong></li>
+        </ul>
+      </div>
+    </div>
+    <aside class="notes">
+      Pourquoi pas de using dans un .hpp : il s'imposerait à tous les fichiers qui l'incluent, avec des risques de conflits de noms.
+    </aside>
+  </section>
+
+  <section class="haut">
+    <h2>Le fichier source <code>.cpp</code></h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <div>
+          <pre data-titre="LibraryCard.cpp (1/2)"><code class="language-cpp" data-trim>
+#include "LibraryCard.hpp"
+#include &lt;iostream&gt;
+using namespace std;
+
+LibraryCard::LibraryCard(string newOwner)
+    : owner(newOwner), borrowedBooks(0) {
+}
+
+bool LibraryCard::borrowBook() {
+    if (borrowedBooks &gt;= 5) {
+        return false;
+    }
+    borrowedBooks++;
+    return true;
+}
+          </code></pre>
+          <ul class="legende-code">
+            <li>Les <strong>guillemets</strong> désignent un fichier de votre projet, les chevrons <code>&lt; &gt;</code> la bibliothèque standard</li>
+            <li><code>LibraryCard::</code> devant chaque méthode indique sa classe. <code>::</code> est l'<strong>opérateur de résolution de portée</strong></li>
+          </ul>
+        </div>
+        <div>
+          <pre data-titre="LibraryCard.cpp (2/2)"><code class="language-cpp" data-trim>
+bool LibraryCard::returnBook() {
+    if (borrowedBooks == 0) {
+        return false;
+    }
+    borrowedBooks--;
+    return true;
+}
+
+int LibraryCard::getBorrowedBooks() const {
+    return borrowedBooks;
+}
+
+void LibraryCard::display() const {
+    cout &lt;&lt; owner &lt;&lt; " : " &lt;&lt; borrowedBooks;
+    cout &lt;&lt; " livre(s)" &lt;&lt; endl;
+}
+          </code></pre>
+          <ul class="legende-code">
+            <li><code>const</code> se répète dans la définition</li>
+            <li><code>borrowedBooks--</code> retire 1</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Le programme principal et la compilation</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <div>
+          <pre data-titre="main.cpp"><code class="language-cpp" data-trim>
+#include "LibraryCard.hpp"
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    LibraryCard card("Manon");
+    card.borrowBook();
+    card.borrowBook();
+    card.returnBook();
+    card.display();
+    return 0;
+}
+          </code></pre>
+          <ul class="legende-code">
+            <li><code>main.cpp</code> inclut seulement le <code>.hpp</code> : le sommaire de la classe suffit pour l'utiliser</li>
+          </ul>
+        </div>
+        <div>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="main.cpp"><code class="nohighlight" data-noescape><span class="invite">$ </span>g++ -std=c++17 -Wall *.cpp -o biblio
+<span class="invite">$ </span>./biblio
+Manon : 1 livre(s)</code></pre>
+          <ul class="legende-code">
+            <li>On compile <strong>tous les <code>.cpp</code> ensemble</strong> : <code>*.cpp</code> veut dire « tous les fichiers qui finissent par <code>.cpp</code> »</li>
+            <li>On ne compile jamais un <code>.hpp</code> : il est recopié dans chaque <code>.cpp</code> qui l'inclut</li>
+            <li>Erreur <code>undefined reference to LibraryCard::…</code> ? Un <code>.cpp</code> n'a pas été compilé : vérifiez la commande</li>
+          </ul>
+          <div class="encadre marine petit">Le dossier du projet contient <code>LibraryCard.hpp</code>, <code>LibraryCard.cpp</code> et <code>main.cpp</code>, et un seul <code>main</code>.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <!-- #6 DES OBJETS QUI COLLABORENT                                      -->
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">#6</div>
+    <h2>Des objets qui collaborent</h2>
+    <div class="sous-titre">Classes et objets</div>
+  </section>
+
+  <section class="haut">
+    <h2>Copie ou référence ?</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <div>
+          <pre data-titre="reference.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+using namespace std;
+
+class Wallet {
+private:
+    int coins = 10;
+
+public:
+    void spend(int amount) {
+        coins = coins - amount;
+    }
+    int getCoins() const {
+        return coins;
+    }
+};
+          </code></pre>
+          <ul class="legende-code">
+            <li>Par défaut, un paramètre reçoit une <strong>copie</strong> : <code>buyCoffeeCopy</code> modifie la copie, l'original ne bouge pas</li>
+            <li>Avec <code>&amp;</code>, le paramètre est une <strong>référence</strong> : un autre nom pour <strong>le même objet</strong></li>
+          </ul>
+        </div>
+        <div>
+          <pre data-titre="reference.cpp (2/2)"><code class="language-cpp" data-trim>
+void buyCoffeeCopy(Wallet wallet) {
+    wallet.spend(2);
+}
+
+void buyCoffee(Wallet&amp; wallet) {
+    wallet.spend(2);
+}
+
+int main() {
+    Wallet manonWallet;
+    buyCoffeeCopy(manonWallet);
+    cout &lt;&lt; manonWallet.getCoins() &lt;&lt; endl;
+    buyCoffee(manonWallet);
+    cout &lt;&lt; manonWallet.getCoins() &lt;&lt; endl;
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="reference.cpp"><code class="nohighlight" data-noescape>10
+8</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>La référence constante</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre data-titre="Extrait"><code class="language-plaintext">void showWallet(const Wallet&amp; wallet) {
+    cout &lt;&lt; wallet.getCoins() &lt;&lt; endl;
+    // wallet.spend(2);   ← refusé
+}</code></pre>
+        <ul class="dense">
+          <li>Pour une fonction qui ne fait que <strong>lire</strong> un objet : une <strong>référence constante</strong>, <code>const Wallet&amp;</code></li>
+          <li>Pas de copie, et le compilateur garantit que l'objet n'est <strong>pas modifié</strong>. Seules les méthodes <code>const</code> sont permises</li>
+        </ul>
+      </div>
+      <table class="dense" style="margin-top: 6px;">
+        <tr><th>Paramètre</th><th>Copie ?</th><th>Modifie l'original ?</th><th>Usage</th></tr>
+        <tr><td><code>Wallet wallet</code></td><td>oui</td><td>non</td><td>petits types : <code>int</code>, <code>double</code>, <code>bool</code></td></tr>
+        <tr><td><code>Wallet&amp; wallet</code></td><td>non</td><td><strong>oui</strong></td><td>la fonction doit modifier l'objet</td></tr>
+        <tr><td><code>const Wallet&amp; wallet</code></td><td>non</td><td>non</td><td>la fonction lit seulement l'objet</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Un objet dans un objet</h2>
+    <div class="corps">
+      <div class="colonnes code-texte">
+        <pre data-titre="student.cpp (1/3)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+class Laptop {
+private:
+    string brand;
+    int battery;
+
+public:
+    Laptop(string newBrand)
+        : brand(newBrand), battery(100) {
+    }
+    void use(int hours) {
+        battery = battery - 20 * hours;
+    }
+    int getBattery() const {
+        return battery;
+    }
+};
+        </code></pre>
+        <ul class="dense">
+          <li>Un attribut peut être un <strong>objet d'une autre classe</strong> : un étudiant <strong>possède</strong> un ordinateur. C'est la <strong>composition</strong></li>
+          <li>Voici d'abord la classe <code>Laptop</code>, une classe ordinaire</li>
+          <li>La classe <code>Student</code> aura un attribut <code>Laptop laptop;</code>, comme elle a un attribut <code>string name;</code></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Un objet dans un objet (suite)</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <pre data-titre="student.cpp (2/3)"><code class="language-cpp" data-trim>
+class Student {
+private:
+    string name;
+    Laptop laptop;
+
+public:
+    Student(string newName, string brand)
+        : name(newName), laptop(brand) {
+    }
+
+    void attendCourse(int hours) {
+        laptop.use(hours);
+        cout &lt;&lt; name &lt;&lt; " : batterie à "
+             &lt;&lt; laptop.getBattery() &lt;&lt; " %"
+             &lt;&lt; endl;
+    }
+};
+        </code></pre>
+        <div>
+          <pre data-titre="student.cpp (3/3)"><code class="language-cpp" data-trim>
+int main() {
+    Student cosmo("Cosmo", "Framework");
+    cosmo.attendCourse(2);
+    cosmo.attendCourse(1);
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="student.cpp"><code class="nohighlight" data-noescape>Cosmo : batterie à 60 %
+Cosmo : batterie à 40 %</code></pre>
+          <ul class="legende-code">
+            <li>La liste d'initialisation appelle le constructeur de l'objet contenu : <code>laptop(brand)</code></li>
+            <li>Les méthodes de <code>Student</code> utilisent les méthodes publiques de <code>Laptop</code>, jamais ses attributs privés</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="haut">
+    <h2>Une méthode qui agit sur un autre objet</h2>
+    <div class="corps">
+      <div class="colonnes code-double">
+        <div>
+          <pre data-titre="lend.cpp (1/2)"><code class="language-cpp" data-trim>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+class Student {
+private:
+    string name;
+    int notes;
+
+public:
+    Student(string newName, int newNotes)
+        : name(newName), notes(newNotes) {
+    }
+    int getNotes() const {
+        return notes;
+    }
+          </code></pre>
+          <ul class="legende-code">
+            <li><code>lendNotesTo</code> reçoit un autre étudiant <strong>par référence</strong> : elle modifie l'objet de Chris, pas une copie</li>
+            <li>Elle lit les attributs privés d'un <strong>autre</strong> <code>Student</code> : <code>private</code> protège la classe, pas chaque objet</li>
+          </ul>
+        </div>
+        <div>
+          <pre data-titre="lend.cpp (2/2)"><code class="language-cpp" data-trim>
+    void lendNotesTo(Student&amp; classmate) {
+        if (notes &gt; 0) {
+            notes--;
+            classmate.notes++;
+        }
+    }
+};
+
+int main() {
+    Student manon("Manon", 1);
+    Student chris("Chris", 0);
+    manon.lendNotesTo(chris);
+    manon.lendNotesTo(chris);
+    cout &lt;&lt; manon.getNotes() &lt;&lt; " "
+         &lt;&lt; chris.getNotes() &lt;&lt; endl;
+    return 0;
+}
+          </code></pre>
+          <pre class="terminal mini" data-titre="Terminal" data-sortie="lend.cpp"><code class="nohighlight" data-noescape>0 1</code></pre>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      Manon prête sa seule fiche, le second prêt est refusé. C'est exactement le schéma d'un personnage qui en attaque un autre, au TP1.
+    </aside>
+  </section>
+
+  <section class="haut">
+    <h2>Récapitulatif</h2>
+    <div class="corps">
+      <table class="dense">
+        <tr><th>Notion</th><th>En C++</th></tr>
+        <tr><td>Déclarer une classe</td><td><code>class LibraryCard { … };</code> (avec le point-virgule)</td></tr>
+        <tr><td>Créer un objet</td><td><code>LibraryCard card("Manon");</code></td></tr>
+        <tr><td>Appeler une méthode</td><td><code>card.borrowBook();</code></td></tr>
+        <tr><td>Encapsulation</td><td>attributs <code>private</code>, méthodes <code>public</code> qui vérifient les valeurs</td></tr>
+        <tr><td>Méthode qui ne modifie pas l'objet</td><td><code>int getBorrowedBooks() const;</code></td></tr>
+        <tr><td>Constructeur</td><td>nom de la classe, sans type de retour, liste d'initialisation <code>: owner(newOwner)</code></td></tr>
+        <tr><td>Destructeur</td><td><code>~LibraryCard()</code>, appelé à la fin du bloc où l'objet est créé</td></tr>
+        <tr><td>Deux fichiers</td><td><code>.hpp</code> (déclaration, <code>#pragma once</code>) et <code>.cpp</code> (définitions avec <code>LibraryCard::</code>)</td></tr>
+        <tr><td>Paramètre objet</td><td><code>Wallet&amp;</code> pour modifier, <code>const Wallet&amp;</code> pour lire</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>À vous de jouer : le TP1</h2>
+    <div class="corps">
+      <div class="carte pleine">
+        <h3>Les Chroniques d'Ardelune – TP1 : les premiers héros</h3>
+        Créez les classes <code>Weapon</code> et <code>Hero</code>, chacune dans ses deux fichiers, puis faites s'affronter deux héros dans un duel au tour par tour.
+      </div>
+      <ul style="margin-top: 22px;">
+        <li>Énoncé : <a href="../tp/tp1.html" target="_blank"><strong>TP1 – Les premiers héros</strong></a></li>
+        <li>Un commit et un push à <strong>chaque étape terminée</strong></li>
+        <li>Documentation : <a href="https://cppreference.com/" target="_blank">cppreference.com</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section data-layout="titre">
+    <h1>Des questions ?</h1>
+    <div class="sous-titre">
+      Chris CHEVALIER<br>
+      chris.chevalier@ecole-hexagone.com
+    </div>
+  </section>
+
+</div>
+</div>
+
+<script src="../assets/vendor/reveal/dist/reveal.js"></script>
+<script src="../assets/vendor/reveal/plugin/highlight/highlight.js"></script>
+<script src="../assets/vendor/reveal/plugin/notes/notes.js"></script>
+<script src="../assets/js/hexagone.js"></script>
+</body>
+</html>

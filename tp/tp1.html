@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TP1 – Les premiers héros – 1IPOO</title>
+  <link rel="stylesheet" href="../assets/css/enonce.css">
+</head>
+<body>
+
+<header class="entete">
+  <div class="panneau"><img src="../assets/charte/logo-hexagone.png" alt="École Hexagone"></div>
+  <div class="titre">
+    <h1>TP1 – Les premiers héros</h1>
+    <p><span class="code-module">1IPOO</span> – Projet fil rouge « Les Chroniques d'Ardelune » · Mardi 1er décembre</p>
+  </div>
+</header>
+
+<main>
+
+  <h3>Contexte</h3>
+  <p>
+    Le royaume d'<strong>Ardelune</strong> vivait en paix depuis des siècles. Mais depuis la dernière pleine lune, une brume grise descend des montagnes
+    et réveille des créatures oubliées. Les villages appellent à l'aide des aventuriers prêts à défendre le royaume.
+  </p>
+  <p>
+    Avant de les envoyer au combat, la guilde des aventuriers veut tester ses recrues lors de <strong>duels d'entraînement</strong>.
+    Votre mission : écrire en C++ le programme qui gère ces héros, leurs armes et leurs duels. ⚔️
+  </p>
+
+  <div class="encadre marine">
+    <span class="intitule">Ce TP en bref</span>
+    <ul>
+      <li><strong>Objectifs</strong> : écrire deux classes réparties en fichiers <code>.hpp</code> et <code>.cpp</code>, protéger leurs données (encapsulation), utiliser des constructeurs, un destructeur et des références.</li>
+      <li>Ce TP est la première brique du <strong>projet Ardelune</strong>, que vous enrichirez au TP2 et au TP3 puis présenterez en soutenance le 15 décembre.</li>
+      <li>Faites un commit et poussez-le sur GitHub à <strong>chaque étape terminée</strong>.</li>
+      <li>L'IA est autorisée pour le projet, à une condition : <strong>comprendre chaque ligne</strong> de votre code. Je le vérifierai en soutenance.</li>
+    </ul>
+  </div>
+
+  <nav class="sommaire">
+    <a href="#etape-0"><span class="n">Étape 0</span><br>Le dépôt GitHub</a>
+    <a href="#etape-1"><span class="n">Étape 1</span><br>Les armes</a>
+    <a href="#etape-2"><span class="n">Étape 2</span><br>Les héros</a>
+    <a href="#etape-3"><span class="n">Étape 3</span><br>Les actions</a>
+    <a href="#etape-4"><span class="n">Étape 4</span><br>Le duel</a>
+    <a href="#etape-5"><span class="n">Étape 5</span><br>Le README</a>
+    <a href="#bonus"><span class="n">Bonus</span><br>Pour aller plus loin</a>
+  </nav>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-0">
+    <h2><span class="num">0</span> Le dépôt GitHub</h2>
+    <div class="meta"><span class="etiquette clair">GitHub · GitHub Desktop · VS Code · g++</span></div>
+
+    <p>Tout le projet vit dans <strong>un seul dépôt</strong>, que vous enrichirez de TP en TP.</p>
+    <ol>
+      <li>Sur GitHub, <a href="https://github.com/new" target="_blank">créez un dépôt</a> :
+        <ul>
+          <li>nom : <code>1ipoo-ardelune-nom-prenom</code> (avec votre nom et votre prénom) ;</li>
+          <li>visibilité : <strong>Private</strong> ;</li>
+          <li>cochez <strong>Add a README file</strong> ;</li>
+          <li>dans <strong>Add .gitignore</strong>, choisissez le modèle <strong>C++</strong>. Ce fichier liste ce que Git ne doit jamais envoyer, comme les programmes compilés.</li>
+        </ul>
+      </li>
+      <li>Dans <strong>Settings → Collaborators</strong>, cliquez sur <strong>Add people</strong> et invitez <strong>Chris-CHEVALIER</strong>.</li>
+      <li>Sur la page d'accueil du dépôt, cliquez sur <strong>Code</strong> puis <strong>Open with GitHub Desktop</strong>, et <strong>clonez</strong> le dépôt (copiez-le sur votre ordinateur).</li>
+      <li>Dans GitHub Desktop, menu <strong>Repository → Open in Visual Studio Code</strong>.</li>
+      <li>Ouvrez le fichier <code>.gitignore</code> et ajoutez cette ligne à la fin, pour que Git ignore aussi le programme compilé sous macOS et Linux :
+        <pre data-titre=".gitignore – à la fin du fichier"><code class="nohighlight">ardelune</code></pre>
+      </li>
+      <li>Créez le fichier <code>main.cpp</code>, compilez-le et exécutez-le dans le terminal de VS Code :
+        <pre data-titre="main.cpp"><code class="language-cpp">
+          #include &lt;iostream&gt;
+          using namespace std;
+
+          int main() {
+              cout &lt;&lt; "Bienvenue à Ardelune !" &lt;&lt; endl;
+              return 0;
+          }
+        </code></pre>
+        <pre data-titre="Terminal"><code class="nohighlight"><span class="invite">$ </span>g++ -std=c++17 -Wall *.cpp -o ardelune
+<span class="invite">$ </span>./ardelune
+Bienvenue à Ardelune !</code></pre>
+      </li>
+    </ol>
+    <p class="muet" style="font-size: 14px;">Gardez cette commande pendant tout le projet : <code>*.cpp</code> compile tous les fichiers <code>.cpp</code> du dossier. Dans le terminal, la flèche <kbd>↑</kbd> rappelle la commande précédente.
+      GitHub appartient à Microsoft et relève du droit américain (<em>Cloud Act</em>). Des alternatives ouvertes existent, comme <a href="https://codeberg.org/" target="_blank">Codeberg</a> ou <a href="https://about.gitlab.com/" target="_blank">GitLab</a>.</p>
+
+    <div class="encadre">
+      <span class="intitule">Faire un commit et le pousser</span>
+      Dans GitHub Desktop, l'onglet <strong>Changes</strong> liste les fichiers modifiés. Écrivez un message dans <strong>Summary</strong>,
+      cliquez sur <strong>Commit to main</strong>, puis sur <strong>Push origin</strong>.
+      <span class="muet" style="font-size: 14px;">En ligne de commande : <code>git add .</code>, <code>git commit -m "message"</code> puis <code>git push</code>.</span>
+    </div>
+
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li>le dépôt est privé et je suis invité comme collaborateur ;</li>
+        <li><code>main.cpp</code> se compile sans erreur ni avertissement et affiche <code>Bienvenue à Ardelune !</code> ;</li>
+        <li>le programme compilé (<code>ardelune</code> ou <code>ardelune.exe</code>) n'apparaît pas dans l'onglet <strong>Changes</strong> de GitHub Desktop ;</li>
+        <li>vous avez fait un commit « Premier programme » et vous l'avez poussé.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-1">
+    <h2><span class="num">1</span> Les armes</h2>
+    <div class="meta"><span class="etiquette clair">Classe · encapsulation · constructeurs · .hpp et .cpp</span></div>
+
+    <p>Chaque héros porte une arme. Une arme a un <strong>nom</strong> et un nombre de <strong>dégâts</strong>.</p>
+    <p>Créez la classe <code>Weapon</code> dans deux fichiers, <code>Weapon.hpp</code> et <code>Weapon.cpp</code> :</p>
+    <table>
+      <tr><th>Élément</th><th>Rôle</th></tr>
+      <tr><td><code>std::string name</code> <span class="etiquette clair">privé</span></td><td>nom de l'arme</td></tr>
+      <tr><td><code>int damage</code> <span class="etiquette clair">privé</span></td><td>dégâts infligés, <strong>toujours entre 1 et 50</strong></td></tr>
+      <tr><td><code>Weapon()</code></td><td>constructeur par défaut : un <code>"Bâton de marche"</code> de 5 dégâts</td></tr>
+      <tr><td><code>Weapon(std::string newName, int newDamage)</code></td><td>constructeur avec paramètres. Une valeur de dégâts inférieure à 1 devient 1, une valeur supérieure à 50 devient 50</td></tr>
+      <tr><td><code>std::string getName() const</code></td><td>renvoie le nom</td></tr>
+      <tr><td><code>int getDamage() const</code></td><td>renvoie les dégâts</td></tr>
+      <tr><td><code>void display() const</code></td><td>affiche <code>Épée courte (12 dégâts)</code> puis passe à la ligne</td></tr>
+    </table>
+
+    <p>Pour tester votre classe, remplacez le contenu de <code>main.cpp</code> par ce programme d'essai :</p>
+    <pre data-titre="main.cpp – essai de l'étape 1"><code class="language-cpp">
+      #include "Weapon.hpp"
+
+      int main() {
+          Weapon stick;
+          Weapon sword("Épée courte", 12);
+          Weapon legendary("Lame du dragon", 999);
+          stick.display();
+          sword.display();
+          legendary.display();
+          return 0;
+      }
+    </code></pre>
+    <pre data-titre="Affichage attendu"><code class="nohighlight">Bâton de marche (5 dégâts)
+Épée courte (12 dégâts)
+Lame du dragon (50 dégâts)</code></pre>
+
+    <details>
+      <summary>Indices</summary>
+      <ul>
+        <li>Le <code>.hpp</code> commence par <code>#pragma once</code> et <code>#include &lt;string&gt;</code>. Il ne contient que les attributs et les prototypes.</li>
+        <li>Le <code>.cpp</code> commence par <code>#include "Weapon.hpp"</code>. Chaque méthode y est précédée de <code>Weapon::</code>.</li>
+        <li>Le constructeur peut d'abord recopier <code>newDamage</code> grâce à la liste d'initialisation, puis corriger la valeur avec deux <code>if</code> dans son corps.</li>
+        <li><code>const</code> s'écrit dans le <code>.hpp</code> <strong>et</strong> dans le <code>.cpp</code>.</li>
+      </ul>
+    </details>
+
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li>les attributs sont privés et la classe se compile sans avertissement ;</li>
+        <li>le programme d'essai affiche exactement les trois lignes attendues ;</li>
+        <li>vous avez fait un commit « Classe Weapon » et vous l'avez poussé.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-2">
+    <h2><span class="num">2</span> Les héros</h2>
+    <div class="meta"><span class="etiquette clair">Composition · constructeur · destructeur · méthodes const</span></div>
+
+    <p>Un héros a un nom, des points de vie (PV), des potions et une arme. Créez la classe <code>Hero</code> dans <code>Hero.hpp</code> et <code>Hero.cpp</code> :</p>
+    <table>
+      <tr><th>Élément</th><th>Rôle</th></tr>
+      <tr><td><code>std::string name</code> <span class="etiquette clair">privé</span></td><td>nom du héros</td></tr>
+      <tr><td><code>int health</code> <span class="etiquette clair">privé</span></td><td>PV actuels, <strong>jamais négatifs</strong> ni supérieurs à <code>maxHealth</code></td></tr>
+      <tr><td><code>int maxHealth</code> <span class="etiquette clair">privé</span></td><td>PV maximum, <strong>entre 50 et 200</strong></td></tr>
+      <tr><td><code>int potions</code> <span class="etiquette clair">privé</span></td><td>nombre de potions, 3 au départ</td></tr>
+      <tr><td><code>Weapon weapon</code> <span class="etiquette clair">privé</span></td><td>l'arme équipée : un objet de la classe <code>Weapon</code></td></tr>
+      <tr><td><code>Hero(std::string newName, int newMaxHealth, Weapon newWeapon)</code></td><td>constructeur. <code>maxHealth</code> est ramené entre 50 et 200, puis le héros commence avec tous ses PV et 3 potions</td></tr>
+      <tr><td><code>~Hero()</code></td><td>destructeur : affiche <code>Aria quitte l'aventure.</code></td></tr>
+      <tr><td><code>std::string getName() const</code> et <code>int getHealth() const</code></td><td>accesseurs</td></tr>
+      <tr><td><code>bool isAlive() const</code></td><td>renvoie <code>true</code> si le héros a encore des PV</td></tr>
+      <tr><td><code>void takeDamage(int amount)</code></td><td>retire <code>amount</code> PV, sans descendre sous 0. Une valeur négative est ignorée</td></tr>
+      <tr><td><code>void display() const</code></td><td>affiche <code>Aria – 70/100 PV – 3 potion(s) – </code> puis l'arme, grâce à sa méthode <code>display()</code></td></tr>
+    </table>
+
+    <pre data-titre="main.cpp – essai de l'étape 2"><code class="language-cpp">
+      #include "Hero.hpp"
+      #include &lt;iostream&gt;
+      using namespace std;
+
+      int main() {
+          Hero aria("Aria", 100, Weapon("Épée courte", 12));
+          Hero golem("Golem", 500, Weapon());
+          aria.display();
+          golem.display();
+
+          aria.takeDamage(30);
+          aria.display();
+          aria.takeDamage(-10);
+          aria.takeDamage(200);
+          cout &lt;&lt; aria.getHealth() &lt;&lt; " " &lt;&lt; aria.isAlive() &lt;&lt; endl;
+          return 0;
+      }
+    </code></pre>
+    <pre data-titre="Affichage attendu"><code class="nohighlight">Aria – 100/100 PV – 3 potion(s) – Épée courte (12 dégâts)
+Golem – 200/200 PV – 3 potion(s) – Bâton de marche (5 dégâts)
+Aria – 70/100 PV – 3 potion(s) – Épée courte (12 dégâts)
+0 0
+Golem quitte l'aventure.
+Aria quitte l'aventure.</code></pre>
+
+    <details>
+      <summary>Indices</summary>
+      <ul>
+        <li><code>Hero.hpp</code> doit inclure <code>"Weapon.hpp"</code> : sans lui, le compilateur ne connaît pas le type <code>Weapon</code>.</li>
+        <li>L'arme s'initialise dans la liste d'initialisation, comme les autres attributs : <code>weapon(newWeapon)</code>.</li>
+        <li><code>Weapon("Épée courte", 12)</code> crée une arme sans lui donner de nom de variable, juste pour la passer au constructeur.</li>
+        <li>Pourquoi « Golem quitte l'aventure. » s'affiche-t-il avant Aria ? Revoyez l'ordre de destruction des objets à la fin d'un bloc.</li>
+      </ul>
+    </details>
+
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li>le programme d'essai affiche exactement les six lignes attendues ;</li>
+        <li>aucun attribut n'est public et toutes les méthodes qui ne modifient pas le héros sont <code>const</code> ;</li>
+        <li>vous avez fait un commit « Classe Hero » et vous l'avez poussé.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-3">
+    <h2><span class="num">3</span> Les actions</h2>
+    <div class="meta"><span class="etiquette clair">Références · objets qui collaborent</span></div>
+
+    <p>Ajoutez trois méthodes à la classe <code>Hero</code> :</p>
+    <table>
+      <tr><th>Méthode</th><th>Rôle</th></tr>
+      <tr><td><code>void attack(Hero&amp; target) const</code></td><td>affiche <code>Brom frappe Aria avec Hache de guerre : 15 dégâts.</code> puis inflige à <code>target</code> les dégâts de l'arme</td></tr>
+      <tr><td><code>bool drinkPotion()</code></td><td>consomme une potion et rend 30 PV, sans dépasser <code>maxHealth</code>. Affiche <code>Aria boit une potion : 100/100 PV.</code> et renvoie <code>true</code>.<br>
+        Refuse et renvoie <code>false</code> s'il ne reste aucune potion (<code>Aria n'a plus de potion !</code>) ou si le héros a déjà tous ses PV (<code>Aria est déjà en pleine forme.</code>). Une potion refusée n'est pas consommée</td></tr>
+      <tr><td><code>void equip(Weapon newWeapon)</code></td><td>remplace l'arme du héros et affiche <code>Aria s'équipe : Arc long.</code></td></tr>
+    </table>
+
+    <pre data-titre="main.cpp – essai de l'étape 3"><code class="language-cpp">
+      #include "Hero.hpp"
+
+      int main() {
+          Hero aria("Aria", 100, Weapon("Épée courte", 12));
+          Hero brom("Brom", 120, Weapon("Hache de guerre", 15));
+          brom.attack(aria);
+          aria.drinkPotion();
+          aria.drinkPotion();
+          aria.equip(Weapon("Arc long", 18));
+          aria.attack(brom);
+          brom.display();
+          return 0;
+      }
+    </code></pre>
+    <pre data-titre="Affichage attendu"><code class="nohighlight">Brom frappe Aria avec Hache de guerre : 15 dégâts.
+Aria boit une potion : 100/100 PV.
+Aria est déjà en pleine forme.
+Aria s'équipe : Arc long.
+Aria frappe Brom avec Arc long : 18 dégâts.
+Brom – 102/120 PV – 3 potion(s) – Hache de guerre (15 dégâts)
+Brom quitte l'aventure.
+Aria quitte l'aventure.</code></pre>
+
+    <details>
+      <summary>Indices</summary>
+      <ul>
+        <li><code>target</code> est une <strong>référence</strong> : <code>target.takeDamage(…)</code> modifie le vrai héros adverse, pas une copie.</li>
+        <li><code>attack</code> peut être <code>const</code> : elle modifie la cible, pas le héros qui attaque.</li>
+        <li>Les dégâts se lisent avec l'accesseur de l'arme : <code>weapon.getDamage()</code>. Les attributs de <code>Weapon</code> restent privés.</li>
+      </ul>
+    </details>
+
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li>le programme d'essai affiche exactement les huit lignes attendues ;</li>
+        <li>une potion refusée n'est pas consommée ;</li>
+        <li>vous avez fait un commit « Actions des héros » et vous l'avez poussé.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-4">
+    <h2><span class="num">4</span> Le duel</h2>
+    <div class="meta"><span class="etiquette clair">Fonctions · boucles · saisies · références</span></div>
+
+    <p>Remplacez le programme d'essai par le vrai jeu. Dans <code>main.cpp</code> :</p>
+    <ol>
+      <li>Créez deux héros : <strong>Aria</strong> (100 PV, « Épée courte », 12 dégâts) et <strong>Brom</strong> (120 PV, « Hache de guerre », 15 dégâts).</li>
+      <li>Écrivez une fonction <code>void playTurn(Hero&amp; active, Hero&amp; opponent)</code>, au-dessus de <code>main</code>. Elle joue le tour du héros <code>active</code> :
+        <ul>
+          <li>elle affiche <code>--- Tour : Aria ---</code> puis l'état du héros ;</li>
+          <li>elle propose <code>[1] Attaquer  [2] Boire une potion</code> et lit le choix avec <code>cin</code> ;</li>
+          <li>elle redemande tant que le choix est invalide : autre nombre, lettres, potion refusée.</li>
+        </ul>
+      </li>
+      <li>Dans <code>main</code>, les héros jouent chacun leur tour <strong>tant qu'ils sont tous les deux en vie</strong>. À la fin, affichez le vainqueur : <code>Brom tombe au combat ! Aria remporte le duel.</code></li>
+    </ol>
+    <pre data-titre="Exemple d'exécution (début)"><code class="nohighlight">=== Les Chroniques d'Ardelune : le duel ===
+
+--- Tour : Aria ---
+Aria – 100/100 PV – 3 potion(s) – Épée courte (12 dégâts)
+[1] Attaquer  [2] Boire une potion
+Votre choix : <span class="saisie">2</span>
+Aria est déjà en pleine forme.
+[1] Attaquer  [2] Boire une potion
+Votre choix : <span class="saisie">x</span>
+Choix invalide, tapez 1 ou 2.
+[1] Attaquer  [2] Boire une potion
+Votre choix : <span class="saisie">1</span>
+Aria frappe Brom avec Épée courte : 12 dégâts.
+
+--- Tour : Brom ---
+Brom – 108/120 PV – 3 potion(s) – Hache de guerre (15 dégâts)
+[1] Attaquer  [2] Boire une potion
+Votre choix : <span class="saisie">1</span>
+Brom frappe Aria avec Hache de guerre : 15 dégâts.</code></pre>
+    <pre data-titre="Exemple d'exécution (fin)"><code class="nohighlight">Aria tombe au combat ! Brom remporte le duel.
+Brom quitte l'aventure.
+Aria quitte l'aventure.</code></pre>
+
+    <p>Quand l'utilisateur tape des lettres au lieu d'un nombre, <code>cin</code> passe en <strong>état d'erreur</strong> et refuse toutes les lectures suivantes. Cette fonction lit un choix sans planter. Copiez-la au-dessus de <code>playTurn</code> :</p>
+    <pre data-titre="main.cpp – fonction fournie"><code class="language-cpp">
+      // Lit un entier au clavier ; renvoie -1 si la saisie n'est pas un nombre.
+      int readChoice() {
+          int choice;
+          if (!(cin &gt;&gt; choice)) {
+              cin.clear();             // efface l'état d'erreur de cin
+              cin.ignore(1000, '\n');  // jette le reste de la ligne tapée
+              return -1;
+          }
+          return choice;
+      }
+    </code></pre>
+
+    <details>
+      <summary>Indices</summary>
+      <ul>
+        <li>Pour alterner les joueurs, comptez les tours : un tour impair pour Aria (<code>playTurn(aria, brom)</code>), un tour pair pour Brom (<code>playTurn(brom, aria)</code>). <code>turn % 2</code> donne le reste de la division par 2.</li>
+        <li>Dans <code>playTurn</code>, une boucle <code>while (true)</code> qui se termine par un <code>return</code> dès qu'une action a réussi fait très bien l'affaire.</li>
+        <li>Si « Aria quitte l'aventure. » s'affiche au milieu du duel, un héros a été passé <strong>par copie</strong> : la copie est détruite à la fin de la fonction. Vérifiez les <code>&amp;</code>.</li>
+      </ul>
+    </details>
+
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li>un duel complet se joue jusqu'à la victoire d'un des deux héros ;</li>
+        <li>aucune saisie ne fait planter ou boucler le programme : lettres, <code>0</code>, <code>7</code>, potion refusée… ;</li>
+        <li>les messages « quitte l'aventure » n'apparaissent qu'à la toute fin ;</li>
+        <li>vous avez fait un commit « Duel » et vous l'avez poussé.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="etape-5">
+    <h2><span class="num">5</span> Le README</h2>
+    <div class="meta"><span class="etiquette clair">Markdown · documentation</span></div>
+
+    <p>Complétez le fichier <code>README.md</code> du dépôt. Il sera enrichi à chaque TP. Pour l'instant, il contient au moins :</p>
+    <pre data-titre="README.md – modèle à adapter"><code class="language-markdown">
+      # Les Chroniques d'Ardelune
+
+      Jeu de rôle en mode texte écrit en C++ pour le module 1IPOO (École Hexagone).
+      Auteur : Prénom NOM
+
+      ## Compiler et lancer
+
+      ```
+      g++ -std=c++17 -Wall *.cpp -o ardelune
+      ./ardelune
+      ```
+
+      ## Fonctionnalités
+
+      - [x] Classes Weapon et Hero (TP1)
+      - [x] Duel au tour par tour entre deux héros (TP1)
+      - [ ] Classes de héros (TP2)
+      - [ ] Arène (TP3)
+
+      ## Usage de l'IA
+
+      Outils utilisés et pour quoi faire (ou « aucun »).
+    </code></pre>
+
+    <div class="encadre">
+      <span class="intitule">Pour valider, assurez-vous que…</span>
+      <ul>
+        <li>le README s'affiche correctement sur la page GitHub du dépôt ;</li>
+        <li>il explique comment compiler et lancer le jeu et il déclare votre usage de l'IA ;</li>
+        <li>vous avez fait un commit « README » et vous l'avez poussé.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="bonus">
+    <h2><span class="num">+</span> Pour aller plus loin</h2>
+    <div class="meta"><span class="etiquette ambre">Facultatif</span></div>
+
+    <h3>Bonus 1 – Choisir son héros</h3>
+    <ul>
+      <li>Au lancement, chaque joueur saisit le nom de son héros et choisit son arme dans une liste de trois armes.</li>
+    </ul>
+
+    <h3>Bonus 2 – Coups critiques</h3>
+    <ul>
+      <li>Chaque attaque a une chance sur cinq d'infliger le double des dégâts : <code>Coup critique !</code></li>
+      <li>Pour tirer un nombre au hasard, utilisez <a href="https://cppreference.com/w/cpp/numeric/random/uniform_int_distribution.html" target="_blank"><code>std::uniform_int_distribution</code></a> de la bibliothèque <code>&lt;random&gt;</code>.</li>
+    </ul>
+
+    <h3>Bonus 3 – Un adversaire automatique</h3>
+    <ul>
+      <li>Ajoutez un mode « contre l'ordinateur » : Brom choisit seul son action. Il boit une potion s'il lui reste moins de 30 PV, sinon il attaque.</li>
+    </ul>
+  </section>
+
+  <!-- ================================================================== -->
+  <section class="defi" id="auto-evaluation">
+    <h2><span class="num">✓</span> Avant de passer au TP2</h2>
+
+    <p>Vérifiez chaque point. Je les contrôlerai en soutenance le 15 décembre.</p>
+    <ul class="checklist">
+      <li>Le projet se compile avec <code>g++ -std=c++17 -Wall *.cpp -o ardelune</code> <strong>sans aucun avertissement</strong>.</li>
+      <li>Chaque classe est répartie dans un <code>.hpp</code> (avec <code>#pragma once</code>) et un <code>.cpp</code>.</li>
+      <li>Tous les attributs sont privés. Aucune valeur incohérente n'est possible : PV négatifs, dégâts hors limites, potions en trop.</li>
+      <li>Aucune saisie ne fait planter le duel.</li>
+      <li>Classes en <code>PascalCase</code>, méthodes et attributs en <code>camelCase</code>, le tout en anglais.</li>
+      <li>Le dépôt est sur GitHub, j'y suis invité et il contient un commit par étape.</li>
+      <li>Vous pouvez expliquer <strong>chaque ligne</strong> de votre code.</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer class="pied">Chris CHEVALIER · 1IPOO – Initiation à la programmation orientée objet · École Hexagone</footer>
+
+<script src="../assets/vendor/reveal/plugin/highlight/highlight.js"></script>
+<script src="../assets/js/enonce.js"></script>
+</body>
+</html>

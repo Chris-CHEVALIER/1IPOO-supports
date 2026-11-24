@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>1IPOO – Initiation à la programmation orientée objet</title>
+  <link rel="stylesheet" href="assets/fonts/outfit.css">
+  <style>
+    :root { --marine: #1E427C; --ambre: #F7B120; --jaune: #FFD301; --gris-clair: #EEF2F8; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Outfit", Arial, "Helvetica Neue", Helvetica, sans-serif; color: var(--marine); background: #fff; }
+    header { background: var(--marine); color: #fff; display: flex; align-items: stretch; min-height: 180px; }
+    header .panneau { background: var(--ambre); display: flex; align-items: center; justify-content: center; padding: 24px 32px; flex: 0 0 auto; }
+    header .panneau img { width: 240px; max-width: 60vw; display: block; }
+    header .titre { padding: 28px 32px; display: flex; flex-direction: column; justify-content: center; }
+    header h1 { margin: 0 0 8px; font-size: clamp(28px, 5vw, 42px); }
+    header p { margin: 0; font-size: 18px; }
+    header .code { color: var(--jaune); font-weight: 700; }
+    main { max-width: 960px; margin: 0 auto; padding: 32px 16px 48px; }
+    h2 { font-size: 24px; margin: 32px 0 14px; padding-left: 14px; border-left: 6px solid var(--ambre); }
+    ul { list-style: none; margin: 0; padding: 0; }
+    li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+         padding: 14px 18px; border-bottom: 1px solid #D5DDEA; }
+    li:nth-child(even) { background: var(--gris-clair); }
+    li .nom { font-weight: 700; font-size: 18px; }
+    li .liens a { display: inline-block; margin-left: 8px; padding: 6px 14px; border-radius: 4px; font-weight: 700;
+                  font-size: 14px; text-decoration: none; background: var(--marine); color: #fff; }
+    li .liens a.pdf { background: var(--ambre); color: var(--marine); }
+    li .info { font-size: 15px; }
+    li.a-venir .nom { opacity: .5; }
+    li.a-venir .liens { font-size: 14px; opacity: .6; }
+    footer { text-align: center; font-size: 14px; opacity: .7; padding: 24px 16px; }
+    @media (max-width: 640px) { header { flex-direction: column; } li .liens a { margin: 0 8px 0 0; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="panneau"><img src="assets/charte/logo-hexagone.png" alt="École Hexagone"></div>
+    <div class="titre">
+      <h1>Initiation à la programmation orientée objet</h1>
+      <p><span class="code">1IPOO</span> · C++ · Bachelor 1re année · 2026-2027</p>
+    </div>
+  </header>
+  <main>
+    <h2>Avant le premier cours</h2>
+    <ul>
+      <li>
+        <span class="nom">Installer son environnement C++</span>
+        <span class="liens"><a href="guides/installation.html">Guide</a><a class="pdf" href="pdf/installation.pdf">PDF</a></span>
+      </li>
+    </ul>
+    <h2>Supports de cours</h2>
+    <ul>
+      <li>
+        <span class="nom">0 – Organisation du module</span>
+        <span class="liens"><a href="cours/0-organisation-du-module.html">Présentation</a><a class="pdf" href="pdf/0-organisation-du-module.pdf">PDF</a></span>
+      </li>
+      <li>
+        <span class="nom">1 – Classes et objets</span>
+        <span class="liens"><a href="cours/1-classes-et-objets.html">Présentation</a><a class="pdf" href="pdf/1-classes-et-objets.pdf">PDF</a></span>
+      </li>
+      <li class="a-venir">
+        <span class="nom">2 – Héritage et polymorphisme</span>
+        <span class="liens">Mercredi 2 décembre</span>
+      </li>
+    </ul>
+    <h2>Projet « Les Chroniques d'Ardelune »</h2>
+    <ul>
+      <li>
+        <span class="nom">TP1 – Les premiers héros</span>
+        <span class="liens"><a href="tp/tp1.html">Énoncé</a><a class="pdf" href="pdf/tp1.pdf">PDF</a></span>
+      </li>
+      <li class="a-venir">
+        <span class="nom">TP2 – Les classes de héros</span>
+        <span class="liens">Mercredi 2 décembre</span>
+      </li>
+      <li class="a-venir">
+        <span class="nom">TP3 – L'arène</span>
+        <span class="liens">Mercredi 2 décembre</span>
+      </li>
+    </ul>
+    <h2>Évaluation · mardi 15 décembre</h2>
+    <ul>
+      <li>
+        <span class="nom">Rendu du projet complet</span>
+        <span class="info">Dernier commit poussé avant 11h00</span>
+      </li>
+      <li>
+        <span class="nom">Soutenances individuelles · dès 11h00</span>
+        <span class="info">10 min · démonstration, explication, modification en direct · sans IA</span>
+      </li>
+      <li>
+        <span class="nom">Examen écrit · 14h45</span>
+        <span class="info">30 min · questions ouvertes · sans documents ni IA</span>
+      </li>
+    </ul>
+  </main>
+  <footer>Chris CHEVALIER · <a href="mailto:chris.chevalier@ecole-hexagone.com" style="color: inherit;">chris.chevalier@ecole-hexagone.com</a></footer>
+</body>
+</html>

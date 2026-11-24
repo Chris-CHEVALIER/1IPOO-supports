@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Organisation du module – 1IPOO</title>
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reset.css">
+  <link rel="stylesheet" href="../assets/vendor/reveal/dist/reveal.css">
+  <link rel="stylesheet" href="../assets/css/hexagone.css">
+</head>
+<body data-pied="1IPOO – Initiation à la programmation orientée objet · Organisation du module">
+<div class="reveal">
+<div class="slides">
+
+  <!-- ================================================================== -->
+  <section data-layout="titre">
+    <h1>Organisation du module</h1>
+    <div class="sous-titre">
+      <span class="code-module">1IPOO</span> – Initiation à la programmation orientée objet<br>
+      Chris CHEVALIER
+    </div>
+    <aside class="notes">
+      Accueil des deux campus : Clermont-Ferrand en salle avec moi, Versailles sur Teams.
+      Vérifier le son et le partage d'écran avant de commencer. Tour de table rapide : qui a terminé l'installation du guide ?
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="sommaire">
+    <h1>Sommaire</h1>
+    <ol>
+      <li>Le module</li>
+      <li>Le déroulé</li>
+      <li>Modalités d'évaluation</li>
+    </ol>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">#1</div>
+    <h2>Le module</h2>
+    <div class="sous-titre">Organisation du module</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Pourquoi le C++ ?</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <p><strong>Un langage rapide et proche de la machine :</strong></p>
+          <ul class="dense">
+            <li>Il est <strong>compilé</strong> : votre code est traduit en langage machine avant d'être lancé</li>
+            <li>Il est utilisé là où la <strong>performance</strong> compte : moteurs de jeux vidéo, navigateurs web, systèmes embarqués, finance</li>
+            <li>Il est <strong>normalisé</strong> et libre d'usage : plusieurs compilateurs gratuits existent (GCC, Clang)</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Un langage pour apprendre l'objet :</strong></p>
+          <ul class="dense">
+            <li>Il rend <strong>visibles</strong> les notions que Python cache : types, droits d'accès, mémoire</li>
+            <li>Les concepts objet appris ici (classe, héritage, polymorphisme) se retrouvent en <strong>Java, C#, PHP, Python…</strong></li>
+          </ul>
+        </div>
+      </div>
+      <div class="encadre" style="margin-top: 14px;">
+        Vous savez déjà programmer en Python : variables, conditions, boucles et fonctions existent aussi en C++. <strong>Seule l'écriture change.</strong>
+      </div>
+    </div>
+    <aside class="notes">
+      Rassurer : on ne repart pas de zéro. Le premier cours fait le pont Python → C++ avant de passer à l'objet.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Objectifs du module</h2>
+    <div class="corps">
+      <p>À l'issue du module, vous serez capables de :</p>
+      <ul>
+        <li><strong>Écrire, compiler et exécuter</strong> un programme C++ réparti en plusieurs fichiers</li>
+        <li><strong>Créer des classes</strong> avec des attributs, des méthodes, des constructeurs et un destructeur</li>
+        <li><strong>Protéger les données</strong> d'un objet grâce à l'encapsulation</li>
+        <li><strong>Réutiliser du code</strong> grâce à l'héritage, simple et multiple</li>
+        <li><strong>Manipuler une collection d'objets</strong> différents grâce au polymorphisme et aux classes abstraites</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Programme</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div class="carte">
+          <h3>Cours 1 – Classes et objets</h3>
+          Du Python au C++, classes, attributs et méthodes, encapsulation, fichiers <code>.hpp</code> et <code>.cpp</code>, constructeurs et destructeur
+        </div>
+        <div class="carte">
+          <h3>Cours 2 – Héritage et polymorphisme</h3>
+          Héritage simple et multiple, méthodes virtuelles, collections d'objets, classes abstraites
+        </div>
+      </div>
+      <div class="carte pleine" style="margin-top: 26px;">
+        <h3>Projet fil rouge « Les Chroniques d'Ardelune »</h3>
+        3 TP qui s'enchaînent : un jeu de rôle en mode texte, construit étape par étape, des premiers héros jusqu'à une arène de combat
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">#2</div>
+    <h2>Le déroulé</h2>
+    <div class="sous-titre">Organisation du module</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Calendrier</h2>
+    <div class="corps">
+      <div class="frise">
+        <div class="etape">
+          <div class="date">Mar. 1er décembre</div>
+          <ul>
+            <li>Organisation et cours 1</li>
+            <li>TP1 – Les premiers héros</li>
+            <li>15h45 : Kahoot</li>
+          </ul>
+        </div>
+        <div class="etape">
+          <div class="date">Mer. 2 décembre</div>
+          <ul>
+            <li>Cours 2</li>
+            <li>TP2 – Les classes de héros</li>
+            <li>TP3 – L'arène</li>
+            <li>15h45 : Kahoot</li>
+          </ul>
+        </div>
+        <div class="etape">
+          <div class="date">D'ici le 15</div>
+          <ul>
+            <li>Fin du projet, chez vous</li>
+          </ul>
+        </div>
+        <div class="etape marine">
+          <div class="date">Mar. 15 décembre</div>
+          <ul>
+            <li>9h : fin du projet, <strong>dernier commit à 11h00</strong></li>
+            <li>11h : soutenances individuelles</li>
+            <li>14h45 : examen écrit (30 min)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="encadre" style="margin-top: 26px;">
+        Horaires des trois journées : <strong>9h – 13h</strong> puis <strong>14h – 16h</strong>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Deux campus, un seul cours</h2>
+    <div class="corps">
+      <table>
+        <tr><th style="width: 200px;">Journées</th><th>Avec moi en salle</th><th>Sur Teams</th></tr>
+        <tr><td>1er et 2 décembre</td><td>Clermont-Ferrand</td><td>Versailles, depuis chez vous ou le campus</td></tr>
+        <tr><td>15 décembre</td><td>Versailles</td><td>Clermont-Ferrand</td></tr>
+      </table>
+      <div class="colonnes" style="margin-top: 20px;">
+        <div>
+          <ul class="dense">
+            <li>Micro coupé pendant le travail, <strong>caméra facultative</strong></li>
+            <li>Vos questions dans le <strong>chat</strong> Teams : je réponds au fil de l'eau</li>
+            <li>Je vous rejoins en appel quand vous le demandez. Vous me montrez votre code en <strong>partageant votre écran</strong></li>
+          </ul>
+        </div>
+        <div>
+          <ul class="dense">
+            <li>Les cours et les énoncés sont <strong>en ligne et en PDF</strong> : en cas de coupure, continuez avec eux</li>
+            <li>À distance, un point d'étape rapide <strong>toutes les heures</strong> pendant les TP</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+      Donner le lien Teams et les liens des supports dans le chat dès le début. Rappeler aux étudiants à distance de rester connectés pendant les TP.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Une journée type</h2>
+    <div class="corps">
+      <table>
+        <tr><th style="width: 190px;">Moment</th><th>Déroulé</th></tr>
+        <tr><td>Matin</td><td>Cours, ponctué de quiz « Qu'affiche ce programme ? » et de mini-exercices, puis début du TP</td></tr>
+        <tr><td>Après-midi</td><td>TP du projet Ardelune, avec un accompagnement individuel</td></tr>
+        <tr><td>15h45</td><td>Kahoot : 10 questions pour ancrer la journée</td></tr>
+      </table>
+      <div class="encadre marine" style="margin-top: 22px;">
+        Demandez de l'aide dès que vous êtes bloqués. <strong>Rester bloqué 20 minutes, c'est 20 minutes perdues</strong>.
+        En C++, le compilateur affiche beaucoup d'erreurs : lisez toujours <strong>la première</strong>, c'est souvent la seule qui compte.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Votre environnement de travail</h2>
+    <div class="corps">
+      <ul style="margin-bottom: 18px;">
+        <li><strong>Un compilateur C++</strong> : <code>g++</code> (MSYS2 sous Windows, outils Xcode sous macOS)</li>
+        <li><a href="https://code.visualstudio.com/" target="_blank"><strong>VS Code</strong></a> et son <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools" target="_blank">extension C/C++</a></li>
+        <li><a href="https://desktop.github.com/" target="_blank"><strong>GitHub Desktop</strong></a> et votre compte <strong>GitHub</strong> avec la double authentification</li>
+        <li><a href="https://cppreference.com/" target="_blank"><strong>cppreference.com</strong></a> : la documentation de référence du C++ (en anglais)</li>
+      </ul>
+      <div class="encadre marine">
+        Toute la procédure est dans le <a href="../guides/installation.html" target="_blank"><strong>guide d'installation</strong></a>.
+        Le test final : compiler <code>hello.cpp</code> et voir s'afficher <code>Bonjour depuis le C++ !</code>
+      </div>
+    </div>
+    <aside class="notes">
+      Faire lever la main (ou réagir dans le chat) à ceux dont le test fonctionne. Les autres : dépannage pendant le début du cours 1,
+      OnlineGDB en dernier recours.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="section">
+    <div class="numero">#3</div>
+    <h2>Modalités d'évaluation</h2>
+    <div class="sous-titre">Organisation du module</div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Modalités d'évaluation</h2>
+    <div class="corps">
+      <table>
+        <tr><th>Épreuve</th><th>Conditions</th><th class="num">Poids</th></tr>
+        <tr><td><strong>Projet Ardelune</strong> <span class="etiquette">Pratique</span></td><td>Code rendu sur GitHub et soutenance individuelle le mardi 15/12</td><td class="num"><strong>60 %</strong></td></tr>
+        <tr><td><strong>Examen écrit</strong> <span class="etiquette ambre">Théorie</span></td><td>Le mardi 15/12 à 14h45, sur ordinateur, sans documents ni IA</td><td class="num"><strong>40 %</strong></td></tr>
+      </table>
+      <div class="encadre" style="margin-top: 22px;">
+        La soutenance et l'écrit portent sur ce que vous démontrez <strong>vous-mêmes, en direct</strong>.
+      </div>
+    </div>
+    <aside class="notes">
+      Justifier : à l'heure de l'IA générative, un code rendu ne prouve pas qu'on sait programmer.
+      La soutenance et l'écrit vérifient la compréhension.
+    </aside>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Soutenance et examen écrit</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div class="carte">
+          <h3>Soutenance individuelle · 10 min · le 15/12 dès 11h00</h3>
+          <ul>
+            <li>Démonstration de votre jeu</li>
+            <li>Explication d'une partie du code que je choisis</li>
+            <li>Une petite modification en direct, <strong>sans IA</strong></li>
+          </ul>
+        </div>
+        <div class="carte">
+          <h3>Examen écrit · 30 min · le 15/12 à 14h45</h3>
+          <ul>
+            <li><strong>Questions ouvertes</strong> sur les deux cours</li>
+            <li>Plusieurs questions portent sur des <strong>extraits de code</strong> à lire</li>
+            <li>Sur ordinateur (questionnaire Microsoft Forms), avec votre compte École Hexagone</li>
+            <li>Sans documents ni IA. Tiers temps : 40 min</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>Rendu du projet sur GitHub</h2>
+    <div class="corps">
+      <ul>
+        <li>Un dépôt <strong>privé</strong> nommé <code>1ipoo-ardelune-nom-prenom</code>, créé avec GitHub Desktop</li>
+        <li>Invitez <strong>Chris-CHEVALIER</strong> comme collaborateur <strong>dès le mardi 1er décembre</strong></li>
+        <li><strong>Des commits réguliers</strong>, au moins un par étape terminée</li>
+        <li>Un <code>README.md</code> qui explique comment compiler et lancer le jeu et qui déclare votre usage de l'IA</li>
+      </ul>
+      <div class="encadre marine" style="margin-top: 14px;">
+        Rendu du projet complet <strong>au plus tard le mardi 15 décembre à 11h00</strong> : le dernier commit poussé avant cette heure fait foi.
+      </div>
+      <p class="petit muet" style="margin-top: 14px;">GitHub appartient à Microsoft et relève du droit américain (<em>Cloud Act</em>). Je l'utilise parce que je le maîtrise.
+        Des alternatives ouvertes existent : <a href="https://about.gitlab.com/" target="_blank">GitLab</a>, <a href="https://codeberg.org/" target="_blank">Codeberg</a>.</p>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section>
+    <h2>L'IA générative : autorisée, à une condition</h2>
+    <div class="corps">
+      <div class="colonnes">
+        <div>
+          <ul>
+            <li>ChatGPT, Claude, Copilot… sont <strong>autorisés</strong> pour le projet</li>
+            <li>Vous devez <strong>comprendre votre code de bout en bout</strong>. Chaque ligne rendue doit pouvoir être expliquée</li>
+            <li>Déclarez votre usage dans le README : quels outils, pour quoi faire</li>
+          </ul>
+        </div>
+        <div>
+          <ul>
+            <li>La soutenance vérifie cette compréhension. <strong>Une fonctionnalité non expliquée n'est pas comptée</strong></li>
+            <li>Soutenance et examen se font <strong>sans IA</strong></li>
+            <li>L'entraide est encouragée. Expliquer, oui ; donner son code, non</li>
+          </ul>
+        </div>
+      </div>
+      <div class="encadre" style="margin-top: 8px;">
+        Conseil : utilisez l'IA comme un <strong>tuteur</strong> (expliquer une erreur de compilation, relire votre code), pas comme un <strong>auteur</strong>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== -->
+  <section data-layout="titre">
+    <h1>Des questions ?</h1>
+    <div class="sous-titre">
+      Chris CHEVALIER<br>
+      chris.chevalier@ecole-hexagone.com
+    </div>
+  </section>
+
+</div>
+</div>
+
+<script src="../assets/vendor/reveal/dist/reveal.js"></script>
+<script src="../assets/vendor/reveal/plugin/highlight/highlight.js"></script>
+<script src="../assets/vendor/reveal/plugin/notes/notes.js"></script>
+<script src="../assets/js/hexagone.js"></script>
+</body>
+</html>
